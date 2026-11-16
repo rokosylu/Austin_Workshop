@@ -22,12 +22,12 @@ Single reference for every device, address, and link in the workshop lab. Source
 
 | Router | Mgmt IP | Mgmt VRF | Role | Loopback0 | Prefix-SID label | OSPF Area | XR Version | Login |
 |---|---|---|---|---|---|---|---|---|
-| R1 | 198.18.1.11 | management | PE (CE: alpine-0) | 1.1.1.1/32 | 16001 | 0 | 25.1.1 | cisco/cisco |
-| R2 | 198.18.1.12 | management | P | 2.2.2.2/32 | 16002 | 0 | 25.1.1 | cisco/cisco |
-| R3 | 198.18.1.13 | management | PE (CE: alpine-1) | 3.3.3.3/32 | 16003 | 0 | 25.1.1 | cisco/cisco |
-| R4 | 198.18.1.14 | management | PE (CE: alpine-2) | 4.4.4.4/32 | 16004 | 0 | 25.1.1 | cisco/cisco |
-| R5 | 198.18.1.15 | management | P | 5.5.5.5/32 | 16005 | 0 | 25.1.1 | cisco/cisco |
-| R6 | 198.18.1.16 | management | PE (CE: alpine-3) | 6.6.6.6/32 | 16006 | 0 | 25.1.1 | cisco/cisco |
+| R1 | 198.18.1.11 | management | PE (CE: alpine-1) | 1.1.1.1/32 | 16001 | 0 | 25.1.1 | cisco/cisco |
+| R2 | 198.18.1.12 | management | PE (CE: alpine-2) | 2.2.2.2/32 | 16002 | 0 | 25.1.1 | cisco/cisco |
+| R3 | 198.18.1.13 | management | PE (CE: alpine-3) | 3.3.3.3/32 | 16003 | 0 | 25.1.1 | cisco/cisco |
+| R4 | 198.18.1.14 | management | PE (CE: alpine-4) | 4.4.4.4/32 | 16004 | 0 | 25.1.1 | cisco/cisco |
+| R5 | 198.18.1.15 | management | PE (CE: alpine-5) | 5.5.5.5/32 | 16005 | 0 | 25.1.1 | cisco/cisco |
+| R6 | 198.18.1.16 | management | PE (CE: alpine-6) | 6.6.6.6/32 | 16006 | 0 | 25.1.1 | cisco/cisco |
 
 Router interfaces map from the diagram labels `G0/N` to `GigabitEthernet0/0/0/N`.
 
@@ -35,10 +35,12 @@ Router interfaces map from the diagram labels `G0/N` to `GigabitEthernet0/0/0/N`
 
 | Host | eth0 (mgmt) | Gateway | Attached to | Router interface | Host eth1 | Login |
 |---|---|---|---|---|---|---|
-| alpine-0 | 198.18.1.20/24 | 198.18.1.1 | R1 | GigabitEthernet0/0/0/5 | TBD | cisco/cisco |
-| alpine-1 | 198.18.1.21/24 | 198.18.1.1 | R3 | GigabitEthernet0/0/0/5 | TBD | cisco/cisco |
-| alpine-2 | 198.18.1.22/24 | 198.18.1.1 | R4 | GigabitEthernet0/0/0/5 | TBD | cisco/cisco |
-| alpine-3 | 198.18.1.23/24 | 198.18.1.1 | R6 | GigabitEthernet0/0/0/5 | TBD | cisco/cisco |
+| alpine-1 | 198.18.1.21/24 | 198.18.1.1 | R1 | GigabitEthernet0/0/0/5 | TBD | cisco/cisco |
+| alpine-2 | 198.18.1.22/24 | 198.18.1.1 | R2 | GigabitEthernet0/0/0/5 | TBD | cisco/cisco |
+| alpine-3 | 198.18.1.23/24 | 198.18.1.1 | R3 | GigabitEthernet0/0/0/5 | TBD | cisco/cisco |
+| alpine-4 | 198.18.1.24/24 | 198.18.1.1 | R4 | GigabitEthernet0/0/0/5 | TBD | cisco/cisco |
+| alpine-5 | 198.18.1.25/24 | 198.18.1.1 | R5 | GigabitEthernet0/0/0/5 | TBD | cisco/cisco |
+| alpine-6 | 198.18.1.26/24 | 198.18.1.1 | R6 | GigabitEthernet0/0/0/5 | TBD | cisco/cisco |
 
 ## Core Links
 
@@ -50,15 +52,18 @@ Router interfaces map from the diagram labels `G0/N` to `GigabitEthernet0/0/0/N`
 | L4 | R4 GigabitEthernet0/0/0/1 | 10.4.5.0/31 | R5 GigabitEthernet0/0/0/0 | 10.4.5.1/31 | 10.4.5.0/31 |
 | L5 | R5 GigabitEthernet0/0/0/1 | 10.5.6.0/31 | R6 GigabitEthernet0/0/0/0 | 10.5.6.1/31 | 10.5.6.0/31 |
 | L6 | R2 GigabitEthernet0/0/0/2 | 10.2.5.0/31 | R5 GigabitEthernet0/0/0/2 | 10.2.5.1/31 | 10.2.5.0/31 |
+| L7 | R1 GigabitEthernet0/0/0/1 | 10.1.6.0/31 | R6 GigabitEthernet0/0/0/1 | 10.1.6.1/31 | 10.1.6.0/31 |
 
 ## Attachment Circuits (CE-facing)
 
 | Link | Router | Interface | Host | Host Interface | Type | IP |
 |---|---|---|---|---|---|---|
-| L7 | R1 | GigabitEthernet0/0/0/5 | alpine-0 | eth1 | L2 AC (`l2transport`) | none on router |
-| L8 | R3 | GigabitEthernet0/0/0/5 | alpine-1 | eth1 | L2 AC (`l2transport`) | none on router |
-| L9 | R4 | GigabitEthernet0/0/0/5 | alpine-2 | eth1 | L2 AC (`l2transport`) | none on router |
-| L10 | R6 | GigabitEthernet0/0/0/5 | alpine-3 | eth1 | L2 AC (`l2transport`) | none on router |
+| L8 | R1 | GigabitEthernet0/0/0/5 | alpine-1 | eth1 | L2 AC (`l2transport`) | none on router |
+| L9 | R2 | GigabitEthernet0/0/0/5 | alpine-2 | eth1 | L2 AC (`l2transport`) | none on router |
+| L10 | R3 | GigabitEthernet0/0/0/5 | alpine-3 | eth1 | L2 AC (`l2transport`) | none on router |
+| L11 | R4 | GigabitEthernet0/0/0/5 | alpine-4 | eth1 | L2 AC (`l2transport`) | none on router |
+| L12 | R5 | GigabitEthernet0/0/0/5 | alpine-5 | eth1 | L2 AC (`l2transport`) | none on router |
+| L13 | R6 | GigabitEthernet0/0/0/5 | alpine-6 | eth1 | L2 AC (`l2transport`) | none on router |
 
 ## OSPF / SR-MPLS
 
@@ -71,8 +76,8 @@ Router interfaces map from the diagram labels `G0/N` to `GigabitEthernet0/0/0/N`
 | R5 | 5.5.5.5 | 0 | 5 | 16005 |
 | R6 | 6.6.6.6 | 0 | 6 | 16006 |
 
-SRGB: default 16000-23999. Core P routers: R2, R5. PEs: R1, R3, R4, R6.
+SRGB: default 16000-23999. All six routers are PEs, each with one attached alpine host. R2 and R5 also carry transit traffic.
 
 ## Pseudowires
 
-To be defined. Planned: LDP-signaled VPWS (no BGP in core), for example alpine-0 to alpine-3 between R1 and R6 using pw-id 100.
+To be defined. Planned: LDP-signaled VPWS (no BGP in core), for example alpine-1 to alpine-6 between R1 and R6 using pw-id 100.
