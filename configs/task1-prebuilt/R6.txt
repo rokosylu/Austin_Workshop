@@ -21,9 +21,13 @@ router ospf 1
    exit
   interface GigabitEthernet0/0/0/0
    network point-to-point
+   fast-reroute per-prefix
+   fast-reroute per-prefix ti-lfa enable
    exit
   interface GigabitEthernet0/0/0/1
    network point-to-point
+   fast-reroute per-prefix
+   fast-reroute per-prefix ti-lfa enable
    exit
   exit
  exit

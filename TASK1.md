@@ -10,6 +10,7 @@ other router and be able to reach it across the SR-MPLS core.
 - Enabling OSPF and Segment Routing on an XR router
 - Verifying neighbors, routes, MPLS labels and end-to-end reachability
 - Testing the SR-MPLS label path itself with MPLS OAM (`ping sr-mpls`, `traceroute sr-mpls`)
+- Protecting the underlay against a link failure with SR TI-LFA fast reroute
 
 **Time:** about 30 minutes.
 
@@ -490,6 +491,197 @@ R4 has two equal-cost paths from R1, so your trace may go through R2 and R3 or R
 
 ---
 
+## Step 5 - TI-LFA fast reroute
+
+If a link fails, traffic normally stops until OSPF recalculates its routes, which takes a noticeable moment.
+**TI-LFA** (Topology-Independent Loop-Free Alternate) avoids that. The router precomputes a **backup path** for
+every destination *before* anything fails, installs it in the forwarding table, and switches to it the instant the
+protected link goes down. Because the backup is carried as a stack of SR labels, it works in any topology and does not
+need extra protocols. R2-R6 already have it; you add it to R1.
+
+First, look at a route **before** TI-LFA. There is one path and no backup:
+
+```
+show route 2.2.2.2/32 detail
+```
+
+```
+Routing entry for 2.2.2.2/32
+  Known via "ospf 1", distance 110, metric 2, labeled SR, type intra area
+  Routing Descriptor Blocks
+    10.1.2.1, from 2.2.2.2, via GigabitEthernet0/0/0/0
+      Route metric is 2
+      Label: 0x3 (3)
+```
+
+Enable TI-LFA on both core interfaces, under OSPF:
+
+```
+configure terminal
+router ospf 1
+ area 0
+  interface GigabitEthernet0/0/0/0
+   fast-reroute per-prefix
+   fast-reroute per-prefix ti-lfa enable
+   exit
+  interface GigabitEthernet0/0/0/1
+   fast-reroute per-prefix
+   fast-reroute per-prefix ti-lfa enable
+   exit
+  exit
+ exit
+show configuration
+commit
+end
+```
+
+```
+router ospf 1
+ area 0
+  interface GigabitEthernet0/0/0/0
+   fast-reroute per-prefix
+   fast-reroute per-prefix ti-lfa enable
+  !
+  interface GigabitEthernet0/0/0/1
+   fast-reroute per-prefix
+   fast-reroute per-prefix ti-lfa enable
+  !
+ !
+!
+end
+```
+
+- **`fast-reroute per-prefix`** turns on a precomputed backup for each destination prefix.
+- **`ti-lfa enable`** makes that backup an SR label stack that follows the path the network would use after the failure.
+
+### Verify Step 5
+
+Wait a few seconds for the backup paths to be computed, then look at the same route again:
+
+```
+show route 2.2.2.2/32 detail
+```
+
+```
+Routing entry for 2.2.2.2/32
+  Known via "ospf 1", distance 110, metric 2, labeled SR, type intra area
+  Routing Descriptor Blocks
+    10.1.2.1, from 2.2.2.2, via GigabitEthernet0/0/0/0, Protected
+      Route metric is 2
+      Label: 0x3 (3)
+      Backup path id:65
+    10.1.6.1, from 2.2.2.2, via GigabitEthernet0/0/0/1, Backup (TI-LFA)
+      Repair Node(s): 5.5.5.5
+      Route metric is 4
+      Labels: 0x3e85 0x3e82 (16005 16002)
+```
+
+How to read it:
+- **`Protected`**: the primary path (out Gi0/0/0/0 to R2) now has a backup.
+- **`Backup (TI-LFA)`**: the precomputed alternate, out Gi0/0/0/1 to R6. It costs 4 instead of 2, which is normal for a backup.
+- **`Labels: 16005 16002`**: the repair label stack. If the R1-R2 link fails, R1 pushes `16005` (R5's prefix-SID) so the packet is carried through R6 to **R5**, the *repair node*, then `16002` (R2's SID) takes it from R5 to R2.
+- **Why go through R5?** R6's own shortest path to R2 can pass straight back through R1, which would loop. TI-LFA picks R5 as the first node that is safe to hand the packet to.
+
+See the same backup in the forwarding table:
+
+```
+show mpls forwarding prefix 3.3.3.3/32 detail
+```
+
+```
+Local  Outgoing    Prefix             Outgoing     Next Hop        Bytes
+Label  Label       or ID              Interface                    Switched
+------ ----------- ------------------ ------------ --------------- ------------
+16003  16003       SR Pfx (idx 3)     Gi0/0/0/0    10.1.2.1        0
+     Label Stack (Top -> Bottom): { 16003 }
+       16005       SR Pfx (idx 3)     Gi0/0/0/1    10.1.6.1        0            (!)
+     Label Stack (Top -> Bottom): { 16005 16003 }
+     (!): FRR pure backup
+```
+
+The primary sends R3's traffic with just label `16003`. The backup, marked `(!) FRR pure backup`, uses
+`16005 16003`. (Several lines of detail are left out above.)
+
+Finally, a compact view of every route and its backup:
+
+```
+show ospf routes backup-path
+```
+
+```
+O    2.2.2.2/32, metric 2
+       10.1.2.1, from 2.2.2.2, via GigabitEthernet0/0/0/0, path-id 1
+           Backup path: TI-LFA, Repair-List: P node: 5.5.5.5         Label: 16005
+              10.1.6.1, from 2.2.2.2, via GigabitEthernet0/0/0/1, protected bitmap 0000000000000001
+              Attributes: Metric: 4, Interface Disjoint, SRLG Disjoint
+O    3.3.3.3/32, metric 3
+       10.1.2.1, from 3.3.3.3, via GigabitEthernet0/0/0/0, path-id 1
+           Backup path: TI-LFA, Repair-List: P node: 5.5.5.5         Label: 16005
+              10.1.6.1, from 3.3.3.3, via GigabitEthernet0/0/0/1, protected bitmap 0000000000000001
+              Attributes: Metric: 5, Interface Disjoint, SRLG Disjoint
+```
+
+Destinations with **two equal-cost paths** (R4 and R5 from R1) do not need a repair stack. Each path is already
+the backup for the other.
+
+### Optional: break a link and watch it fail over
+
+Shut down R1's link to R2 and confirm traffic to R3 still flows, now through R6:
+
+```
+configure terminal
+interface GigabitEthernet0/0/0/0
+ shutdown
+ exit
+commit
+end
+show route 3.3.3.3/32
+ping 3.3.3.3 source 1.1.1.1
+traceroute 3.3.3.3 source 1.1.1.1
+```
+
+```
+RP/0/RP0/CPU0:R1#show route 3.3.3.3/32
+Routing entry for 3.3.3.3/32
+  Known via "ospf 1", distance 110, metric 5, labeled SR
+  Local Label 16003, type intra area
+  Routing Descriptor Blocks
+    10.1.6.1, from 3.3.3.3, via GigabitEthernet0/0/0/1
+      Route metric is 5
+
+RP/0/RP0/CPU0:R1#ping 3.3.3.3 source 1.1.1.1
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 7/10/15 ms
+
+RP/0/RP0/CPU0:R1#traceroute 3.3.3.3 source 1.1.1.1
+ 1  10.1.6.1 [MPLS: Label 16003 Exp 0] 11 msec  8 msec  10 msec
+ 2  10.5.6.0 [MPLS: Label 16003 Exp 0] 9 msec  8 msec  9 msec
+ 3  10.4.5.0 [MPLS: Label 16003 Exp 0] 11 msec
+    10.2.5.0 10 msec  6 msec
+ 4  10.2.3.1 14 msec
+    10.3.4.0 9 msec  *
+```
+
+The route moved to the R6 path (cost 5) and the traceroute now goes R1 to R6 to R5 and on to R3. **Bring the link back:**
+
+```
+configure terminal
+interface GigabitEthernet0/0/0/0
+ no shutdown
+ exit
+commit
+end
+show ospf neighbor
+```
+
+Wait for both neighbors to return to `FULL`. A real failover happens in the forwarding hardware in tens of milliseconds, far
+faster than you can type a command, so this test shows *where* traffic goes, not how fast it switches.
+
+**Checkpoint:** `show route 2.2.2.2/32 detail` shows the primary as `Protected` and a `Backup (TI-LFA)` path with the
+label stack `16005 16002`. If you ran the optional test, the link is back up and you have two `FULL` neighbors again.
+
+---
+
 ## Final Verification
 
 Run every check from R1. All of them must pass.
@@ -505,6 +697,7 @@ Run every check from R1. All of them must pass.
 | 7 | Label switching | `traceroute 4.4.4.4 source 1.1.1.1` | `[MPLS: Label 16004]` on hop 1 |
 | 8 | SR label path | `ping sr-mpls <loopback>/32` for each of 2.2.2.2 to 6.6.6.6 | `!!!!!` (100 percent) each |
 | 9 | SR label trace | `traceroute sr-mpls 4.4.4.4/32` | Ends with `!` at R4 (`10.4.5.0` or `10.3.4.1`, depending on the path) |
+| 10 | Fast reroute | `show route 2.2.2.2/32 detail` | Primary is `Protected`, plus a `Backup (TI-LFA)` path with labels `16005 16002` |
 
 A quick way to run check 6:
 
@@ -532,6 +725,9 @@ Your changes are in effect as soon as you `commit`. Review what you configured w
 | OSPF stuck in `EXSTART` or `INIT` | Mismatched `network` type, MTU or addressing | `show ospf interface Gi0/0/0/0`. The type should be point-to-point |
 | Routes but no labels | `segment-routing mpls` missing, or no prefix-SID | `show running-config router ospf 1` |
 | `MPLS Embedded Management Subsystem is not running` | `mpls oam` not configured | Add `mpls oam` in config mode and `commit` |
+| Route has no `Protected` / `Backup (TI-LFA)` | `fast-reroute` lines missing, or only on one interface | `show running-config router ospf 1`: both core interfaces need `fast-reroute per-prefix` and `fast-reroute per-prefix ti-lfa enable`. Wait a few seconds after the commit |
+| No backup for R4 or R5 | Expected | They have two equal-cost paths, so each path is the other's backup |
+| Link still down after the optional test | Forgot `no shutdown` | `interface GigabitEthernet0/0/0/0`, `no shutdown`, `commit` |
 | `ping sr-mpls` shows `.` or `F` instead of `!` | Prefix-SID or label missing on a router in the path | `show mpls forwarding` should list a label for that loopback; check `prefix-sid index` |
 | Wrong label for R1 | Wrong index | `prefix-sid index 1`, so R1 = 16001. Not `16001` as the index itself |
 | Ping to a loopback fails | Loopback not advertised, or OSPF not converged yet | `show route ospf` should list that loopback. Wait 15 seconds after the commit, then retry |
@@ -582,9 +778,13 @@ router ospf 1
   !
   interface GigabitEthernet0/0/0/0
    network point-to-point
+   fast-reroute per-prefix
+   fast-reroute per-prefix ti-lfa enable
   !
   interface GigabitEthernet0/0/0/1
    network point-to-point
+   fast-reroute per-prefix
+   fast-reroute per-prefix ti-lfa enable
   !
  !
 !

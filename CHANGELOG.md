@@ -9,6 +9,27 @@ Take a backup before and after each device change with `backups/backup-configs.s
 
 ---
 
+## 2026-11-17
+
+### SR TI-LFA added to the baseline (R2-R6) and to Task 1
+- **Changed (R2-R6):** `fast-reroute per-prefix` and `fast-reroute per-prefix ti-lfa enable` on every core
+  interface under `router ospf 1 / area 0` (R2 and R5: 3 interfaces, R3, R4 and R6: 2). Committed on each. Saved in
+  `configs/task1-prebuilt/R2.txt` to `R6.txt`.
+- **Changed then reverted (R1):** rebuilt the Task 1 config on R1 (underlay, `mpls oam`, TI-LFA), then removed it again.
+  R1 keeps LLDP and `no shutdown` on its core ports.
+- **Verified:** on R1 the routes to 2.2.2.2 and 3.3.3.3 changed from a single path to `Protected` with a
+  `Backup (TI-LFA)` path via Gi0/0/0/1, repair node 5.5.5.5, labels `16005 16002` / `16005 16003`. Destinations with two
+  equal-cost paths (4.4.4.4, 5.5.5.5) protect each other. `show ospf routes backup-path` and
+  `show mpls forwarding prefix 3.3.3.3/32 detail` show the backup. **Failure test:** shut R1 Gi0/0/0/0; the route to
+  3.3.3.3 moved to the R6 path (metric 5), ping 100%, traceroute via R6 and R5. The interface was restored with
+  `no shutdown` (R1 back to two FULL neighbors) before the rollback. Failover speed was not measured.
+- **Docs:** `TASK1.md` has a new Step 5 (TI-LFA, with an optional break-a-link test), a checklist item (#10),
+  troubleshooting rows and TI-LFA in the answer. `solutions/task1/R1.cfg` and `DEVICES.md` updated.
+- **Backups:** `20261117-084731` is now the **lab start state** (`backups/latest`). A backup diff showed R1
+  identical to the previous start and R2-R6 differing only by the TI-LFA lines.
+- **Baselines (local):** `backups/baselines/task1-start` now holds that state. The previous baseline (without TI-LFA)
+  is kept as `backups/baselines/task1-start-before-ti-lfa`.
+
 ## 2026-11-16
 
 ### Named baseline saved
@@ -17,7 +38,7 @@ Take a backup before and after each device change with `backups/backup-configs.s
   link IPs, Loopback0, OSPF 1, SR-MPLS and `mpls oam`, and that R1 has none of them.
 - **Restore from it:** `./backups/restore-configs.sh -d baselines/task1-start` (add `-n` for a dry run first).
 - The repo copy of the R2-R6 baseline is the command lists in `configs/task1-prebuilt/` (no password hashes).
-- **Backups:** `20261116-215346` is now `backups/latest` and matches the previous lab start (`20261116-215206`).
+- **Backups:** `20261116-215346` was `backups/latest` then and matched the previous lab start (`20261116-215206`).
 
 ### MPLS OAM added to the baseline (R2-R6) and to Task 1
 - **Changed (R2-R6):** `mpls oam` added globally and committed. Saved in `configs/task1-prebuilt/R2.txt` to `R6.txt`.
