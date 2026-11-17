@@ -5,3 +5,6 @@ backups/latest
 
 # OS / editor noise
 .DS_Store
+
+# Named baselines (full configs with password hashes) - local only
+backups/baselines/

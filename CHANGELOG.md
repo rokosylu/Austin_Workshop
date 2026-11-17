@@ -11,6 +11,14 @@ Take a backup before and after each device change with `backups/backup-configs.s
 
 ## 2026-11-16
 
+### Named baseline saved
+- **Added** `backups/baselines/task1-start/` (local only, git-ignored): full configs of R1-R6 and alpine-1..6
+  at the Task 1 lab start state. Copied from backup `20261116-215346`, taken after confirming R2-R6 have
+  link IPs, Loopback0, OSPF 1, SR-MPLS and `mpls oam`, and that R1 has none of them.
+- **Restore from it:** `./backups/restore-configs.sh -d baselines/task1-start` (add `-n` for a dry run first).
+- The repo copy of the R2-R6 baseline is the command lists in `configs/task1-prebuilt/` (no password hashes).
+- **Backups:** `20261116-215346` is now `backups/latest` and matches the previous lab start (`20261116-215206`).
+
 ### MPLS OAM added to the baseline (R2-R6) and to Task 1
 - **Changed (R2-R6):** `mpls oam` added globally and committed. Saved in `configs/task1-prebuilt/R2.txt` to `R6.txt`.
 - **Changed then reverted (R1):** rebuilt the full Task 1 config on R1, confirmed the `ping sr-mpls` error
