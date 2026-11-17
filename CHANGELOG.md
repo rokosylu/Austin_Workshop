@@ -11,6 +11,28 @@ Take a backup before and after each device change with `backups/backup-configs.s
 
 ## 2026-11-17
 
+### New Task 1 (IOS XR basics); old Task 1 is now Task 2
+- **Renamed:** `TASK1.md` -> `TASK2.md` (underlay), `solutions/task1/` -> `solutions/task2/`,
+  `configs/task1-prebuilt/` -> `configs/task2-prebuilt/`. The pseudowire task is now Task 3. Earlier changelog entries
+  below use the old names (Task 1 = underlay, Task 2 = pseudowires).
+- **Added** `TASK1.md` (XR basics, R1 only): two-stage commit (change the hostname, see it is unchanged in the running
+  config until `commit`), previewing with `show configuration`, discarding with `end`+`no`, `abort` and `clear`,
+  rolling back with `show configuration commit list`, `rollback configuration last 1` and `rollback configuration to`,
+  `commit label` and `commit confirmed`, and an OSPF comparison of IOS XE vs IOS XR for R1.
+  `TASK2.md` now has a prerequisite pointing at Task 1.
+- **Changed then reverted (R1):** all demo steps were run on R1 to capture real output (hostname changed to
+  R1-LAB/R1-TMP/R1-A/R1-B/R1-CONF, scratch `Loopback99` staged but never committed). R1 was set back to `hostname R1`.
+  A backup diff showed R1 identical to the `task2-start` baseline apart from the timestamp. The commit history on R1 now
+  contains these extra commits (including rollbacks), so commit IDs in `TASK1.md` will differ from students' IDs.
+- **Verified behavior worth knowing:** `rollback configuration to <label>` undoes that commit and everything after it
+  (it returns to the state *before* the labelled commit); `commit confirmed 30` followed by leaving config mode
+  rolls back immediately (XR warns first).
+- **Not verified:** the IOS XE configuration in `TASK1.md` is written from knowledge of XE syntax. It was not
+  tested on an XE device.
+- **Docs:** `DEVICES.md` has a Training Tasks table and new paths; tracker column updated. Local baselines
+  renamed to `backups/baselines/task2-start` and `task2-start-before-ti-lfa`.
+- **Backups:** `20261117-103113` (all 12 devices, matches the baseline).
+
 ### Topology image updated
 - `topology.png` replaced with a redrawn diagram (OSPF area labelled "OSPF 1"). Same links, interfaces and hosts; no device or doc changes needed.
 

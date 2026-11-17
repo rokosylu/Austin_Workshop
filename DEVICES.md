@@ -78,18 +78,26 @@ Router interfaces map from the diagram labels `G0/N` to `GigabitEthernet0/0/0/N`
 
 SRGB: default 16000-23999. All six routers are PEs, each with one attached alpine host. R2 and R5 also carry transit traffic.
 
+## Training Tasks
+
+| Task | Guide | Focus | Devices | Lab state at start |
+|---|---|---|---|---|
+| 1 | [TASK1.md](TASK1.md) | IOS XR basics: two-stage commit, abort/clear, rollback, OSPF on XE vs XR | R1 (ends unchanged) | Same as Task 2 start |
+| 2 | [TASK2.md](TASK2.md) | Underlay on R1: link IPs, OSPF, SR-MPLS, MPLS OAM, TI-LFA | R1 (R2-R6 pre-built) | R1 clean, R2-R6 pre-built |
+| 3 | TASK3.md (to come) | Pseudowires (LDP-signaled) | All devices | Task 2 complete |
+
 ## Configuration Status
 
 | Router | Underlay (link IPs, Loopback0, OSPF 1 area 0, SR-MPLS, MPLS OAM, TI-LFA) | Notes |
 |---|---|---|
-| R1 | Built by the student in Task 1 (reference solution in `solutions/task1/R1.cfg`) | LLDP on, core ports no-shut, Gi0/0/0/5 shut |
-| R2 | Pre-built and verified (`configs/task1-prebuilt/R2.txt`) | LLDP on, core ports no-shut, Gi0/0/0/5 shut |
-| R3 | Pre-built and verified (`configs/task1-prebuilt/R3.txt`) | LLDP on, core ports no-shut, Gi0/0/0/5 shut |
-| R4 | Pre-built and verified (`configs/task1-prebuilt/R4.txt`) | LLDP on, core ports no-shut, Gi0/0/0/5 shut |
-| R5 | Pre-built and verified (`configs/task1-prebuilt/R5.txt`) | LLDP on, core ports no-shut, Gi0/0/0/5 shut |
-| R6 | Pre-built and verified (`configs/task1-prebuilt/R6.txt`) | LLDP on, core ports no-shut, Gi0/0/0/5 shut |
+| R1 | Built by the student in Task 2 (reference solution in `solutions/task2/R1.cfg`) | LLDP on, core ports no-shut, Gi0/0/0/5 shut |
+| R2 | Pre-built and verified (`configs/task2-prebuilt/R2.txt`) | LLDP on, core ports no-shut, Gi0/0/0/5 shut |
+| R3 | Pre-built and verified (`configs/task2-prebuilt/R3.txt`) | LLDP on, core ports no-shut, Gi0/0/0/5 shut |
+| R4 | Pre-built and verified (`configs/task2-prebuilt/R4.txt`) | LLDP on, core ports no-shut, Gi0/0/0/5 shut |
+| R5 | Pre-built and verified (`configs/task2-prebuilt/R5.txt`) | LLDP on, core ports no-shut, Gi0/0/0/5 shut |
+| R6 | Pre-built and verified (`configs/task2-prebuilt/R6.txt`) | LLDP on, core ports no-shut, Gi0/0/0/5 shut |
 
-All core interfaces have a `description` naming the peer router and port. The pseudowire (LDP) and host-port configuration is not done yet (Task 2).
+All core interfaces have a `description` naming the peer router and port. The pseudowire (LDP) and host-port configuration is not done yet (Task 3).
 
 ## Pseudowires
 
