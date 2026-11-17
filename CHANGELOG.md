@@ -11,6 +11,9 @@ Take a backup before and after each device change with `backups/backup-configs.s
 
 ## 2026-11-17
 
+### Topology image updated
+- `topology.png` replaced with a redrawn diagram (OSPF area labelled "OSPF 1"). Same links, interfaces and hosts; no device or doc changes needed.
+
 ### SR TI-LFA added to the baseline (R2-R6) and to Task 1
 - **Changed (R2-R6):** `fast-reroute per-prefix` and `fast-reroute per-prefix ti-lfa enable` on every core
   interface under `router ospf 1 / area 0` (R2 and R5: 3 interfaces, R3, R4 and R6: 2). Committed on each. Saved in
