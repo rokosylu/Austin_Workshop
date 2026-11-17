@@ -1,0 +1,7 @@
+# Device config backups hold password hashes - keep them out of git.
+# The backup/restore scripts themselves (backups/*.sh) can be tracked.
+backups/20*/
+backups/latest
+
+# OS / editor noise
+.DS_Store
