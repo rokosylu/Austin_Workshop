@@ -80,7 +80,7 @@ SRGB: default 16000-23999. All six routers are PEs, each with one attached alpin
 
 ## Configuration Status
 
-| Router | Underlay (link IPs, Loopback0, OSPF 1 area 0, SR-MPLS) | Notes |
+| Router | Underlay (link IPs, Loopback0, OSPF 1 area 0, SR-MPLS, MPLS OAM) | Notes |
 |---|---|---|
 | R1 | Built by the student in Task 1 (reference solution in `solutions/task1/R1.cfg`) | LLDP on, core ports no-shut, Gi0/0/0/5 shut |
 | R2 | Pre-built and verified (`configs/task1-prebuilt/R2.txt`) | LLDP on, core ports no-shut, Gi0/0/0/5 shut |

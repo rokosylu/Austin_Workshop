@@ -11,6 +11,19 @@ Take a backup before and after each device change with `backups/backup-configs.s
 
 ## 2026-11-16
 
+### MPLS OAM added to the baseline (R2-R6) and to Task 1
+- **Changed (R2-R6):** `mpls oam` added globally and committed. Saved in `configs/task1-prebuilt/R2.txt` to `R6.txt`.
+- **Changed then reverted (R1):** rebuilt the full Task 1 config on R1, confirmed the `ping sr-mpls` error
+  ("MPLS Embedded Management Subsystem is not running") without `mpls oam`, added `mpls oam`, tested, then
+  removed everything again (including `no mpls oam`). R1 keeps LLDP and `no shutdown` on its core ports.
+- **Verified:** `ping sr-mpls` to 2.2.2.2, 3.3.3.3, 4.4.4.4, 5.5.5.5 and 6.6.6.6/32 all 100% from R1;
+  `traceroute sr-mpls 4.4.4.4/32` showed the label path R1 -> R6 -> R5 -> R4 ending with `!`;
+  a backup diff showed R1 unchanged from the previous lab start and R2-R6 differing only by `mpls oam`.
+- **Docs:** `TASK1.md` has a new Step 4 (MPLS OAM), two new checklist items, two troubleshooting rows, and
+  `mpls oam` in the answer. `solutions/task1/R1.cfg` includes it. `DEVICES.md` status table updated.
+- **Backups:** `20261116-215206` is now the **lab start state** (`backups/latest`). It supersedes
+  `20261116-213326`, which does not include `mpls oam` on R2-R6.
+
 ### Task 1 underlay: R2-R6 pre-built, R1 reference captured and rolled back
 - **Changed (R2-R6):** Loopback0 (`R.R.R.R/32`), link IPs (`10.<A>.<B>.<n>/31`), interface descriptions,
   OSPF process 1 / area 0 (`network point-to-point`, loopback passive) and SR-MPLS (`segment-routing mpls`,
@@ -26,12 +39,12 @@ Take a backup before and after each device change with `backups/backup-configs.s
   traceroute to 4.4.4.4 showing `[MPLS: Label 16004]`, and R4 holding label 16001 for R1.
 - **Docs:** added `TASK1.md` (student guide, with captured outputs), `solutions/task1/R1.cfg` (answer),
   updated `DEVICES.md` and the tracker (underlay status column, OSPF process 1).
-- **Commands that do not work on XR 25.1.1** (found while writing the guide): `show segment-routing mpls ...`;
-  `ping/traceroute sr-mpls` needs `mpls oam` configured first, so it is left out of Task 1.
+- **Command that does not work on XR 25.1.1:** `show segment-routing mpls ...`. (`ping/traceroute sr-mpls`
+  need `mpls oam`; added in the entry above.)
 - **Backups (all in `backups/`, not in git):**
   - `20261116-212733`: before this change (original baseline, R1-R6 with LLDP and no-shut only).
   - `20261116-213210`: R1 solved (reference state, R1 has the Task 1 config). Do **not** use as the lab start.
-  - `20261116-213326`: **lab start state** (R2-R6 pre-built, R1 clean). `backups/latest` points here.
+  - `20261116-213326`: lab start state before `mpls oam` was added (superseded by `20261116-215206`).
 - **Known risk:** `restore-configs.sh -r` (replace) has not been tested. A baseline where a port is only
   `no shutdown` shows no config lines for that port, so a full replace might leave it shut down. Use merge mode,
   or re-check `show ip interface brief` after any replace.

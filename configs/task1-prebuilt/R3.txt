@@ -27,5 +27,7 @@ router ospf 1
    exit
   exit
  exit
+mpls oam
+ exit
 commit
 end

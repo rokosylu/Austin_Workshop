@@ -9,6 +9,7 @@ other router and be able to reach it across the SR-MPLS core.
 - Configuring a loopback and point-to-point /31 links
 - Enabling OSPF and Segment Routing on an XR router
 - Verifying neighbors, routes, MPLS labels and end-to-end reachability
+- Testing the SR-MPLS label path itself with MPLS OAM (`ping sr-mpls`, `traceroute sr-mpls`)
 
 **Time:** about 30 minutes.
 
@@ -403,6 +404,92 @@ R4 now has R1's label (`16001`), so R1 is fully part of the SR domain.
 
 ---
 
+## Step 4 - MPLS OAM: ping and traceroute the label path
+
+The `ping` and `traceroute` you have used so far test IP reachability. **MPLS OAM** lets you test the
+**SR label-switched path (LSP)** itself: the router sends an MPLS echo request along the same labels that
+real traffic would use, which proves the labels are programmed correctly on every hop. You will use this
+again in Task 2 to check the transport underneath the pseudowires.
+
+Try it first:
+
+```
+ping sr-mpls 6.6.6.6/32
+```
+
+```
+RP/0/RP0/CPU0:R1#ping sr-mpls 6.6.6.6/32
+% MPLS Embedded Management Subsystem is not running.
+To enable, use 'mpls oam' global config command.
+```
+
+The error tells you what to do. R2-R6 already have `mpls oam`, so R1 is the last router that needs it:
+
+```
+configure terminal
+mpls oam
+ exit
+show configuration
+commit
+end
+```
+
+```
+mpls oam
+!
+end
+```
+
+### Verify Step 4
+
+Ping the SR path to each router (the long legend of result codes is left out below):
+
+```
+ping sr-mpls 6.6.6.6/32
+ping sr-mpls 2.2.2.2/32
+ping sr-mpls 3.3.3.3/32
+ping sr-mpls 4.4.4.4/32
+ping sr-mpls 5.5.5.5/32
+```
+
+```
+RP/0/RP0/CPU0:R1#ping sr-mpls 6.6.6.6/32
+Sending 5, 100-byte MPLS Echos to 6.6.6.6/32,
+      timeout is 2 seconds, send interval is 0 msec:
+...
+Type escape sequence to abort.
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 6/7/11 ms
+```
+
+Every ping should show `!!!!!` (100 percent). Now trace the label path to R4:
+
+```
+traceroute sr-mpls 4.4.4.4/32
+```
+
+```
+Tracing MPLS Label Switched Path to 4.4.4.4/32, timeout is 2 seconds
+...
+Type escape sequence to abort.
+  0 10.1.6.0 MRU 1500 [Labels: 16004 Exp: 0]
+L 1 10.1.6.1 MRU 1500 [Labels: 16004 Exp: 0] 14 ms
+L 2 10.5.6.0 MRU 1500 [Labels: implicit-null Exp: 0] 14 ms
+! 3 10.4.5.0 14 ms
+```
+
+How to read it:
+- **Hop 0** is R1 itself, sending the packet with label `16004` (R4's prefix-SID).
+- **`L` hops** are routers that forwarded the packet using its label. Hop 1 is R6, hop 2 is R5.
+- **`implicit-null`** at hop 2 means R5 is the last hop before R4, so it pops the label (the same *Pop* you saw in `show mpls forwarding`).
+- **`!`** means the packet reached the destination, R4 (`10.4.5.0`).
+
+R4 has two equal-cost paths from R1, so your trace may go through R2 and R3 or R2 and R5 instead of R6 and R5. Either is correct.
+
+**Checkpoint:** all five `ping sr-mpls` commands succeed, and the traceroute ends with a `!` at R4.
+
+---
+
 ## Final Verification
 
 Run every check from R1. All of them must pass.
@@ -416,6 +503,8 @@ Run every check from R1. All of them must pass.
 | 5 | SR labels | `show mpls forwarding` | Labels 16002 to 16006 present |
 | 6 | All loopbacks reachable | `ping <loopback> source 1.1.1.1` for each of 2.2.2.2 to 6.6.6.6 | 100 percent each |
 | 7 | Label switching | `traceroute 4.4.4.4 source 1.1.1.1` | `[MPLS: Label 16004]` on hop 1 |
+| 8 | SR label path | `ping sr-mpls <loopback>/32` for each of 2.2.2.2 to 6.6.6.6 | `!!!!!` (100 percent) each |
+| 9 | SR label trace | `traceroute sr-mpls 4.4.4.4/32` | Ends with `!` at R4 (`10.4.5.0` or `10.3.4.1`, depending on the path) |
 
 A quick way to run check 6:
 
@@ -442,6 +531,8 @@ Your changes are in effect as soon as you `commit`. Review what you configured w
 | No OSPF neighbor | Interface missing under OSPF, or wrong area | `show ospf interface brief` should list `Lo0`, `Gi0/0/0/0`, `Gi0/0/0/1` all in area 0 |
 | OSPF stuck in `EXSTART` or `INIT` | Mismatched `network` type, MTU or addressing | `show ospf interface Gi0/0/0/0`. The type should be point-to-point |
 | Routes but no labels | `segment-routing mpls` missing, or no prefix-SID | `show running-config router ospf 1` |
+| `MPLS Embedded Management Subsystem is not running` | `mpls oam` not configured | Add `mpls oam` in config mode and `commit` |
+| `ping sr-mpls` shows `.` or `F` instead of `!` | Prefix-SID or label missing on a router in the path | `show mpls forwarding` should list a label for that loopback; check `prefix-sid index` |
 | Wrong label for R1 | Wrong index | `prefix-sid index 1`, so R1 = 16001. Not `16001` as the index itself |
 | Ping to a loopback fails | Loopback not advertised, or OSPF not converged yet | `show route ospf` should list that loopback. Wait 15 seconds after the commit, then retry |
 
@@ -496,6 +587,8 @@ router ospf 1
    network point-to-point
   !
  !
+!
+mpls oam
 !
 ```
 
