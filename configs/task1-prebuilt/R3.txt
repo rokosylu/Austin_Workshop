@@ -1,0 +1,31 @@
+configure terminal
+interface Loopback0
+ description Router-ID and SR prefix-SID
+ ipv4 address 3.3.3.3 255.255.255.255
+ exit
+interface GigabitEthernet0/0/0/0
+ description to R2 Gi0/0/0/1
+ ipv4 address 10.2.3.1 255.255.255.254
+ exit
+interface GigabitEthernet0/0/0/1
+ description to R4 Gi0/0/0/0
+ ipv4 address 10.3.4.0 255.255.255.254
+ exit
+router ospf 1
+ router-id 3.3.3.3
+ segment-routing mpls
+ area 0
+  interface Loopback0
+   passive enable
+   prefix-sid index 3
+   exit
+  interface GigabitEthernet0/0/0/0
+   network point-to-point
+   exit
+  interface GigabitEthernet0/0/0/1
+   network point-to-point
+   exit
+  exit
+ exit
+commit
+end

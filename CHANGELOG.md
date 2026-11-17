@@ -11,6 +11,31 @@ Take a backup before and after each device change with `backups/backup-configs.s
 
 ## 2026-11-16
 
+### Task 1 underlay: R2-R6 pre-built, R1 reference captured and rolled back
+- **Changed (R2-R6):** Loopback0 (`R.R.R.R/32`), link IPs (`10.<A>.<B>.<n>/31`), interface descriptions,
+  OSPF process 1 / area 0 (`network point-to-point`, loopback passive) and SR-MPLS (`segment-routing mpls`,
+  `prefix-sid index <R>`). Commands are saved in `configs/task1-prebuilt/R2.txt` to `R6.txt`.
+- **Changed then reverted (R1):** the same configuration was applied to R1 in three stages (interfaces, OSPF, SR)
+  to capture the real commands and outputs for `TASK1.md`, then removed by hand (`no router ospf 1`,
+  `no interface Loopback0`, `no description` / `no ipv4 address` on Gi0/0/0/0-1). R1 keeps LLDP and
+  `no shutdown` on its core ports, as agreed. A new backup diffed against the pre-change one was identical
+  except for the "last configuration change" timestamp.
+- **Verified:** R2-R6 formed all expected OSPF adjacencies (everything except the two toward R1) and learned all loopbacks.
+  With R1 configured: 2 FULL neighbors, routes to 2.2.2.2-6.6.6.6 (ECMP to 4.4.4.4 and 5.5.5.5),
+  SR labels 16002-16006 in `show mpls forwarding`, 100% ping to every loopback from `source 1.1.1.1`,
+  traceroute to 4.4.4.4 showing `[MPLS: Label 16004]`, and R4 holding label 16001 for R1.
+- **Docs:** added `TASK1.md` (student guide, with captured outputs), `solutions/task1/R1.cfg` (answer),
+  updated `DEVICES.md` and the tracker (underlay status column, OSPF process 1).
+- **Commands that do not work on XR 25.1.1** (found while writing the guide): `show segment-routing mpls ...`;
+  `ping/traceroute sr-mpls` needs `mpls oam` configured first, so it is left out of Task 1.
+- **Backups (all in `backups/`, not in git):**
+  - `20261116-212733`: before this change (original baseline, R1-R6 with LLDP and no-shut only).
+  - `20261116-213210`: R1 solved (reference state, R1 has the Task 1 config). Do **not** use as the lab start.
+  - `20261116-213326`: **lab start state** (R2-R6 pre-built, R1 clean). `backups/latest` points here.
+- **Known risk:** `restore-configs.sh -r` (replace) has not been tested. A baseline where a port is only
+  `no shutdown` shows no config lines for that port, so a full replace might leave it shut down. Use merge mode,
+  or re-check `show ip interface brief` after any replace.
+
 ### Backup and restore tooling
 - **Added** `backups/backup-configs.sh`: saves `show running-config` from R1-R6 and the network
   files (`/etc/hostname`, `/etc/hosts`, `/etc/network/interfaces`) from alpine-1 to alpine-6
@@ -56,6 +81,5 @@ Take a backup before and after each device change with `backups/backup-configs.s
   loopbacks `R.R.R.R/32`, SR prefix-SID label 16000+R, mgmt `198.18.1.1X`.
 
 ### Not done yet
-- No IP addresses on any R-R link or Loopback0. No OSPF, SR-MPLS or LDP configuration.
-- Host ports Gi0/0/0/5 shut down; no `l2transport` or pseudowire configuration.
-- Alpine eth1 data addressing not decided.
+- No LDP or pseudowire configuration (Task 2). Alpine eth1 addressing and the PW pairs are not decided.
+- Host ports Gi0/0/0/5 stay shut down; students enable them in Task 2.

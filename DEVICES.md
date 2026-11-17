@@ -69,14 +69,27 @@ Router interfaces map from the diagram labels `G0/N` to `GigabitEthernet0/0/0/N`
 
 | Router | Router-ID | Area | Prefix-SID index | Label |
 |---|---|---|---|---|
-| R1 | 1.1.1.1 | 0 | 1 | 16001 |
-| R2 | 2.2.2.2 | 0 | 2 | 16002 |
-| R3 | 3.3.3.3 | 0 | 3 | 16003 |
-| R4 | 4.4.4.4 | 0 | 4 | 16004 |
-| R5 | 5.5.5.5 | 0 | 5 | 16005 |
-| R6 | 6.6.6.6 | 0 | 6 | 16006 |
+| R1 | 1.1.1.1 | Process 1 / Area 0 | 1 | 16001 |
+| R2 | 2.2.2.2 | Process 1 / Area 0 | 2 | 16002 |
+| R3 | 3.3.3.3 | Process 1 / Area 0 | 3 | 16003 |
+| R4 | 4.4.4.4 | Process 1 / Area 0 | 4 | 16004 |
+| R5 | 5.5.5.5 | Process 1 / Area 0 | 5 | 16005 |
+| R6 | 6.6.6.6 | Process 1 / Area 0 | 6 | 16006 |
 
 SRGB: default 16000-23999. All six routers are PEs, each with one attached alpine host. R2 and R5 also carry transit traffic.
+
+## Configuration Status
+
+| Router | Underlay (link IPs, Loopback0, OSPF 1 area 0, SR-MPLS) | Notes |
+|---|---|---|
+| R1 | Built by the student in Task 1 (reference solution in `solutions/task1/R1.cfg`) | LLDP on, core ports no-shut, Gi0/0/0/5 shut |
+| R2 | Pre-built and verified (`configs/task1-prebuilt/R2.txt`) | LLDP on, core ports no-shut, Gi0/0/0/5 shut |
+| R3 | Pre-built and verified (`configs/task1-prebuilt/R3.txt`) | LLDP on, core ports no-shut, Gi0/0/0/5 shut |
+| R4 | Pre-built and verified (`configs/task1-prebuilt/R4.txt`) | LLDP on, core ports no-shut, Gi0/0/0/5 shut |
+| R5 | Pre-built and verified (`configs/task1-prebuilt/R5.txt`) | LLDP on, core ports no-shut, Gi0/0/0/5 shut |
+| R6 | Pre-built and verified (`configs/task1-prebuilt/R6.txt`) | LLDP on, core ports no-shut, Gi0/0/0/5 shut |
+
+All core interfaces have a `description` naming the peer router and port. The pseudowire (LDP) and host-port configuration is not done yet (Task 2).
 
 ## Pseudowires
 
