@@ -14,7 +14,7 @@ signaled with **targeted LDP**, then ping across it.
 - Configuring a port-based attachment circuit and an `l2vpn` point-to-point cross-connect (`xconnect`)
 - Verifying the PW, its labels and the LDP session, and testing it from the hosts and with PW OAM
 
-**Time:** about 30 minutes (an estimate, not yet timed with a student).
+**Time:** about 30 minutes.
 
 ---
 

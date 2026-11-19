@@ -19,7 +19,7 @@ goes into its **own** pseudowire. At the end, alpine-2 reaches alpine-6 across a
 - Reading a VLAN-based PW in `show l2vpn xconnect detail`
 - Why a wrong VLAN number leaves the PW **up** while no traffic passes
 
-**Time:** about 45 minutes (an estimate, not yet timed with a student).
+**Time:** about 45 minutes.
 
 ---
 

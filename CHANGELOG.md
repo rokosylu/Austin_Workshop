@@ -11,6 +11,10 @@ Take a backup before and after each device change with `backups/backup-configs.s
 
 ## 2026-11-19
 
+### Removed the "(an estimate, not yet timed with a student)" wording
+- **Changed (instructor request):** `TASK3.md` and `TASK4.md` now say just "about 30 minutes" and "about 45 minutes".
+  `TASK1.md` and `TASK2.md` already had no qualifier. The times themselves are still estimates; no task has been timed with a student.
+
 ### Tasks 2-4: show the `show configuration` output before the commit
 - **Reason (instructor):** in TASK2 Steps 2-5 the staged commands, `show configuration`, `commit` and `end` were in one
   code block, so a student who pastes it commits straight away and never sees the output block (and after a commit
