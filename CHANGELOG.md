@@ -11,6 +11,15 @@ Take a backup before and after each device change with `backups/backup-configs.s
 
 ## 2026-11-19
 
+### Alpine node configs verified on the nodes
+- **Checked (read-only, all six hosts, up 14-16 minutes after the CML config change):** hostnames are `alpine-1` to
+  `alpine-6` (the `inserthostname-here` problem is fixed), eth0 has 198.18.1.2X/24 with default via 198.18.1.1, eth1 /
+  `eth1.<vlan>` addresses match `configs/alpine/`, static routes are present, and `ip_forward` is 1 only on alpine-3 and
+  alpine-5. The `8021q` module loaded on the four hosts that use VLANs.
+- **Not tested:** connectivity across the PWs (no PWs exist and the routers' Gi0/0/0/5 ports are shut), including the
+  alpine-2 to alpine-6 path through alpine-3 and alpine-5. Do that after Task 3.
+- **Changed:** nothing on the devices. Docs only (`DEVICES.md` note updated).
+
 ### Targeted LDP added to the R2-R6 baseline (for LDP-signaled PWs)
 - **Changed (R2-R6):** `mpls ldp` with `router-id` = Loopback0 (2.2.2.2 to 6.6.6.6) and, under `address-family ipv4`,
   `discovery targeted-hello accept`. Committed on each. No LDP on any interface, so there is no link LDP and the

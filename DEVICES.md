@@ -47,7 +47,7 @@ Router interfaces map from the diagram labels `G0/N` to `GigabitEthernet0/0/0/N`
 Each alpine node's CML configuration is a shell script run at every boot. It sets the hostname (CML's default
 `hostname inserthostname-here` line would otherwise override it), the eth0 management IP and default route, the eth1
 data addressing (port-based, or VLAN sub-interfaces) and the static routes. The files are in `configs/alpine/`
-(`alpine-1.cfg` to `alpine-6.cfg`). **Not yet tested on the nodes.**
+(`alpine-1.cfg` to `alpine-6.cfg`). Verified on the nodes (hostname, IPs, VLAN interfaces, routes, forwarding) on 2026-11-19; end-to-end pings need the Task 3 PWs.
 
 | Host | Static routes | Config file |
 |---|---|---|
