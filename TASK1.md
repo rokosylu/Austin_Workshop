@@ -568,8 +568,6 @@ router ospf 1
 !
 ```
 
-Nothing takes effect until you `commit`.
-
 ### What is different
 
 | | IOS XE | IOS XR |
