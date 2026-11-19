@@ -11,6 +11,26 @@ Take a backup before and after each device change with `backups/backup-configs.s
 
 ## 2026-11-19
 
+### Targeted LDP added to the R2-R6 baseline (for LDP-signaled PWs)
+- **Changed (R2-R6):** `mpls ldp` with `router-id` = Loopback0 (2.2.2.2 to 6.6.6.6) and, under `address-family ipv4`,
+  `discovery targeted-hello accept`. Committed on each. No LDP on any interface, so there is no link LDP and the
+  transport stays SR-MPLS. Saved in `configs/task2-prebuilt/R2.txt` to `R6.txt`. R1 is not changed: the student adds LDP
+  in Task 3.
+- **Decisions (instructor):** keep `targeted-hello accept`, no `log neighbor`.
+- **Command note:** `discovery targeted-hello accept` is rejected directly under `mpls ldp` on XR 25.1.1; it must be
+  under `address-family ipv4`. The first apply committed only the router-id; the second pass added the accept line.
+- **Verified (temporary test, then rolled back):** built an `l2vpn` xconnect (group TMP, `neighbor ipv4 3.3.3.3 pw-id 999`
+  on Gi0/0/0/5) on R2 and R3. The targeted LDP session came up loopback to loopback (`Tgt:3.3.3.3`, neighbor up),
+  PW labels were exchanged (local 24012, remote 24013), `LSP : Up`. The PW stayed down only because Gi0/0/0/5 is shut
+  (AC down). `rollback configuration last 1` on both removed the l2vpn config and left the LDP baseline; Gi0/0/0/5 is
+  back to `shutdown`. The R2 to R3 LDP session stayed up after the rollback.
+- **Observed:** routes to non-adjacent loopbacks still use the SR label (for example 6.6.6.6 outgoing 16006). I did
+  not compare label allocation before and after LDP was added.
+- **Backups:** `20261119-131852` (before), `20261119-132329` (after, now the lab start state). A diff showed only the
+  `mpls ldp` block added on R2-R6. R1 and the alpine hosts are unchanged. Local baselines `task1-start` and
+  `task2-start` had R2-R6 replaced with the new configs.
+- **Docs:** `DEVICES.md` configuration status table and the tracker Devices sheet updated.
+
 ### Alpine hosts: startup configs moved into CML node config, data addressing and static routes designed
 - **Found:** the alpine hosts' live hostname was `inserthostname-here` after the relaunch. Cause: CML attaches a config
   disc to each node, and the image's `/etc/local.d/virl2-01-day0config.start` runs its `node.cfg` as a shell script on

@@ -117,7 +117,7 @@ SRGB: default 16000-23999. All six routers are PEs, each with one attached alpin
 | R5 | Pre-built and verified (`configs/task2-prebuilt/R5.txt`) | Pre-built: `router-id` = Loopback0, `discovery targeted-hello accept` (no LDP on interfaces) | LLDP on, core ports up, Gi0/0/0/5 shut |
 | R6 | Pre-built and verified (`configs/task2-prebuilt/R6.txt`) | Pre-built: `router-id` = Loopback0, `discovery targeted-hello accept` (no LDP on interfaces) | LLDP on, core ports up, Gi0/0/0/5 shut |
 
-All core interfaces have a `description` naming the peer router and port. The pseudowire (LDP) and host-port configuration is not done yet (Task 3).
+All core interfaces have a `description` naming the peer router and port. R1 LDP, the pseudowire (`l2vpn`) and host-port configuration are not done yet (Task 3).
 
 ## Pseudowires (planned, not configured)
 
