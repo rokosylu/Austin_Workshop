@@ -11,6 +11,16 @@ Take a backup before and after each device change with `backups/backup-configs.s
 
 ## 2026-11-19
 
+### SecureCRT session script added
+- **Added** `securecrt/Create-Sessions.py` and `securecrt/README.md`. Run from SecureCRT (**Script > Run**), the script
+  creates 12 SSH2 sessions (user `cisco`, port 22, no stored password) under `Austin Workshop/Routers` (R1-R6,
+  198.18.1.11-16) and `Austin Workshop/Hosts` (alpine-1..6, 198.18.1.21-26). Addresses match the tracker.
+- **Decision (instructor):** all students use SecureCRT.
+- **Verified:** the script ran against a mock of the `crt` scripting API and produced the expected 12 sessions with the
+  right host, user, port and protocol. **Not run in SecureCRT itself** (not available here), so the folder creation by
+  `Save`, the Python 3 requirement (SecureCRT 9.0 or later) and the connection behaviour are unconfirmed.
+- **Not done:** `LAB-ACCESS.md` Part 2 (device access) still needs to be written; it can now point at this script.
+
 ### Task 4 added: VLAN-based PWs (PW2-PW4) on R2, R3, R5, R6
 - **Added** `TASK4.md` and `solutions/task4/R2.cfg`, `R3.cfg`, `R5.cfg`, `R6.cfg`. `TASK3.md` now points to Task 4.
   `DEVICES.md` task and PW tables and the tracker Pseudowires sheet (PW2-PW4) updated.
