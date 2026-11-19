@@ -17,8 +17,10 @@ Take a backup before and after each device change with `backups/backup-configs.s
   `dcloud-rtp-anyconnect.cisco.com`). `access-vpn-app.png` (the app icon) is unchanged. In `LAB-ACCESS.md` the VPN Address row
   now shows the RTP address, the pod-specific note in Step 2 names it, Step 3 mentions the **Anyconnect-to-dCloud** group
   shown in the new screenshot, and Step 4 refers to the RTP(US) banner. No other file mentions SJC.
-- **Follow-up:** the first RTP credentials screenshot showed the instructor's pod username, so `access-vpn-credentials.png` was
-  replaced with an empty dialog (no username or password). The earlier screenshot is still in git history (commit `419e363`).
+- **Follow-up:** the first RTP credentials screenshot, and the original SJC one, showed pod usernames, so
+  `access-vpn-credentials.png` is now an empty dialog (no username or password). The git history was rewritten (force-push) so
+  that file only ever has this version, which **changed every commit hash** from the first commit onward. Commit hashes quoted
+  in this changelog were updated to the new ones. Anything that recorded old hashes elsewhere is stale.
 
 ### LAB-ACCESS.md Part 2 drafted (SecureCRT)
 - **Added** Part 2 to `LAB-ACCESS.md`: device table with addresses, running `securecrt/Create-Sessions.py`, connecting to R1,
@@ -325,9 +327,9 @@ Take a backup before and after each device change with `backups/backup-configs.s
 - **Docs:** tracker and `DEVICES.md` updated; `topology.png` replaced with the new diagram.
 
 ### Documentation
-- `ee40997` Update devices for revised topology.
-- `b58bd25` Add device information reference (`DEVICES.md`).
-- `01da82d` Add lab access guide, Part 1: VPN connection (`LAB-ACCESS.md`).
+- `c07c4f3` Update devices for revised topology.
+- `5df04ea` Add device information reference (`DEVICES.md`).
+- `2db152b` Add lab access guide, Part 1: VPN connection (`LAB-ACCESS.md`).
 - `XR_PW_Workshop_Tracker.xlsx` created: devices, IP plan, links, hosts, OSPF/SR, pseudowires, login checks.
 - **IP plan agreed:** links `10.<A>.<B>.<n>/31` (lower router gets the even address),
   loopbacks `R.R.R.R/32`, SR prefix-SID label 16000+R, mgmt `198.18.1.1X`.
