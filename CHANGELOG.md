@@ -11,6 +11,15 @@ Take a backup before and after each device change with `backups/backup-configs.s
 
 ## 2026-11-19
 
+### LAB-ACCESS.md Part 2 drafted (SecureCRT)
+- **Added** Part 2 to `LAB-ACCESS.md`: device table with addresses, running `securecrt/Create-Sessions.py`, connecting to R1,
+  checking the prompt, connecting to a host, tips for working with several tabs, which devices each task uses, and a
+  troubleshooting table. The credentials table at the top now has the access method, addresses and `cisco`/`cisco` login
+  instead of "TBD".
+- **Not verified:** the SecureCRT menu steps (Connect window, host key window, save password) are written from general
+  knowledge of SecureCRT and only the script run was seen by the instructor. There are no screenshots for Part 2 yet.
+  The advice about the first connection being reset comes from SSH logins to the lab during the build.
+
 ### New "Your Network" pictures for Tasks 2, 3 and 4
 - **Changed:** added `images/network-underlay.png` (the instructor's new diagram, hosts on Gi0/0/0/5 and the seven
   core links) and pointed the "Your Network" section of `TASK2.md` at it. The diagram was checked against the lab's link
