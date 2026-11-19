@@ -4,12 +4,14 @@
 You will learn the **two-stage commit** model, how to **preview, discard and roll back** changes,
 and how a basic **OSPF** configuration looks on **IOS XR** compared with **IOS XE**.
 
-Everything in this task is safe and reversible. **R1 ends exactly as it started.**
+Most of this task is safe practice: you make changes and undo them. The one change you keep is **enabling R1's two core
+interfaces** in Part 4, which Task 2 needs. R1's hostname ends exactly as it started.
 
 **What you will learn**
 - Why a change on XR does nothing until you `commit`
 - How to look at your pending changes (the *target configuration*) and throw them away
 - How to roll back a change after it has been committed
+- How to enable an interface (a first real change) and confirm it with LLDP
 - How XR and XE differ for a basic OSPF setup, using the same R1 design you will build in Task 2
 
 **Time:** about 30 minutes.
@@ -393,7 +395,110 @@ Answer `yes` and the hostname returns to `R1`. This is the habit to use when cha
 
 ---
 
-## Part 4 - OSPF on IOS XE vs IOS XR
+## Part 4 - Enable R1's core interfaces
+
+Now use what you have learned on a real change. R1 is cabled to R2 and R6, but on XR an interface stays
+**shut down** until someone enables it, and R1's two core interfaces start that way. Task 2 needs them up.
+
+First look at the current state:
+
+```
+show ip interface brief
+show lldp neighbors
+```
+
+```
+RP/0/RP0/CPU0:R1#show ip interface brief
+Interface                      IP-Address      Status          Protocol Vrf-Name
+MgmtEth0/RP0/CPU0/0            198.18.1.11     Up              Up       management
+GigabitEthernet0/0/0/0         unassigned      Shutdown        Down     default
+GigabitEthernet0/0/0/1         unassigned      Shutdown        Down     default
+GigabitEthernet0/0/0/2         unassigned      Shutdown        Down     default
+GigabitEthernet0/0/0/3         unassigned      Shutdown        Down     default
+GigabitEthernet0/0/0/4         unassigned      Shutdown        Down     default
+GigabitEthernet0/0/0/5         unassigned      Shutdown        Down     default
+RP/0/RP0/CPU0:R1#show lldp neighbors
+Device ID       Local Intf                      Hold-time  Capability      Port ID
+Total entries displayed: 0
+```
+
+Every interface is `Shutdown` and R1 sees no neighbors. Gi0/0/0/0 goes to R2 and Gi0/0/0/1 goes to R6
+(see the topology in Task 2). Enable just those two, following the same steps as in Part 1: stage the change,
+review it, then commit.
+
+```
+configure terminal
+interface GigabitEthernet0/0/0/0
+ no shutdown
+ exit
+interface GigabitEthernet0/0/0/1
+ no shutdown
+ exit
+show configuration
+```
+
+```
+RP/0/RP0/CPU0:R1(config)#show configuration
+!! Building configuration...
+!! IOS XR Configuration 25.1.1
+interface GigabitEthernet0/0/0/0
+ no shutdown
+!
+interface GigabitEthernet0/0/0/1
+ no shutdown
+!
+end
+```
+
+Your pending changes are exactly the two you meant. Apply them:
+
+```
+commit
+end
+```
+
+### Verify Part 4
+
+```
+show ip interface brief
+```
+
+```
+Interface                      IP-Address      Status          Protocol Vrf-Name
+MgmtEth0/RP0/CPU0/0            198.18.1.11     Up              Up       management
+GigabitEthernet0/0/0/0         unassigned      Up              Up       default
+GigabitEthernet0/0/0/1         unassigned      Up              Up       default
+GigabitEthernet0/0/0/2         unassigned      Shutdown        Down     default
+GigabitEthernet0/0/0/3         unassigned      Shutdown        Down     default
+GigabitEthernet0/0/0/4         unassigned      Shutdown        Down     default
+GigabitEthernet0/0/0/5         unassigned      Shutdown        Down     default
+```
+
+Both interfaces are now `Up / Up`. They have no IP address yet. That comes in Task 2. Leave Gi0/0/0/2 to
+Gi0/0/0/5 shut down. Now check that R1 can see its neighbors. LLDP sends a message about every 30 seconds, so it can
+take up to a minute for them to appear. If the list is empty, wait a little and run it again:
+
+```
+show lldp neighbors
+```
+
+```
+Device ID       Local Intf                      Hold-time  Capability      Port ID
+R2              GigabitEthernet0/0/0/0          120        R               GigabitEthernet0/0/0/0
+R6              GigabitEthernet0/0/0/1          120        R               GigabitEthernet0/0/0/1
+Total entries displayed: 2
+```
+
+LLDP confirms the cabling: R1 Gi0/0/0/0 reaches R2 Gi0/0/0/0, and R1 Gi0/0/0/1 reaches R6 Gi0/0/0/1.
+
+> **If you ever need to undo it:** `show configuration commit changes last 1` shows this change, and
+> `rollback configuration last 1` would shut the ports again. Do not roll it back now, because Task 2 needs them up.
+
+**Checkpoint:** Gi0/0/0/0 and Gi0/0/0/1 are `Up / Up`, and `show lldp neighbors` lists R2 and R6.
+
+---
+
+## Part 5 - OSPF on IOS XE vs IOS XR
 
 If you know IOS or IOS XE, XR will feel familiar but organised differently. Here is the **same basic OSPF
 design for R1** in both. It is what you will build on XR in Task 2: a loopback, two point-to-point /31
@@ -485,8 +590,8 @@ Nothing takes effect until you `commit`.
 | OSPF config only | `show running-config \| section ospf` | `show running-config router ospf 1` |
 | Show a show command from config mode | `do show ...` | `show ...` (or `do show ...`) |
 
-> **In the lab:** XR interfaces start shut down (`admin-down`) unless someone enables them. R1's two core
-> interfaces are already enabled for you. On XE the equivalent step is `no shutdown`.
+> **In the lab:** XR interfaces start shut down unless someone enables them, which is why you enabled R1's two core
+> interfaces in Part 4. On XE the same step is `no shutdown`, and a new router interface often needs it too.
 
 You will configure the XR version yourself in **Task 2**, and you will use `show configuration` and `commit`
 exactly as practised here.
@@ -529,13 +634,14 @@ In XR the interface goes under the area inside `router ospf`. In XE it is usuall
 
 ## Cleanup
 
-Make sure R1 is back to its starting state:
+Make sure R1 ends in the right state for Task 2:
 
 ```
 show running-config hostname
+show ip interface brief
 ```
 
-It should say `hostname R1`. If it does not, set it back:
+The hostname should be `hostname R1`, and Gi0/0/0/0 and Gi0/0/0/1 should be `Up / Up`. If the hostname is wrong, set it back:
 
 ```
 configure terminal

@@ -9,6 +9,28 @@ Take a backup before and after each device change with `backups/backup-configs.s
 
 ---
 
+## 2026-11-19
+
+### Post-outage relaunch: R1 core ports now start shut; Task 1 enables them
+- **Event:** the datacenter had an outage and the lab was checkpointed and relaunched. After reconnecting the VPN,
+  all 12 devices answered ping and SSH (cisco/cisco). Routers were up 14 minutes, alpine hosts 18 minutes.
+- **Found:** R2-R6 and all alpine config files matched the `task2-start` baseline. R1 differed: Gi0/0/0/0 and Gi0/0/0/1
+  came back with an explicit `shutdown` (a bare `no shutdown` leaves no config lines, so it did not survive the
+  relaunch). R1 therefore had no LLDP neighbors. The alpine hosts' live hostnames reset to `inserthostname-here`
+  even though `/etc/hostname` still held the right name (not fixed yet).
+- **Decision:** R1's core ports are assumed to start shut. `TASK1.md` has a new **Part 4 - Enable R1's core
+  interfaces** (stage with `no shutdown`, `show configuration`, `commit`, verify with `show ip interface brief` and
+  `show lldp neighbors`). The old Part 4 (XE vs XR OSPF) is now Part 5. `TASK2.md` starting state and troubleshooting
+  now say the ports are enabled in Task 1. `DEVICES.md` task table and R1 notes updated.
+- **Changed then reverted (R1):** ran the Part 4 commands on R1 to capture output (ports Up/Up, LLDP showed R2 and R6
+  after about a minute), then put `shutdown` back on both ports. A backup diff confirmed R1 matches the post-relaunch
+  backup `20261119-102507`.
+- **Verified:** LLDP neighbors take up to about a minute to appear after the ports come up, and the guide says so.
+- **Backups:** `20261119-102507` (post-relaunch state), `20261119-103002` (Task 1 start state, R1 ports shut).
+- **Baselines (local):** new `backups/baselines/task1-start` (R1 ports shut). `task2-start` is unchanged and is the state
+  after Task 1 completes; its README now warns that a merge restore cannot remove an explicit `shutdown` and that a bare
+  `no shutdown` does not survive a relaunch.
+
 ## 2026-11-17
 
 ### New Task 1 (IOS XR basics); old Task 1 is now Task 2

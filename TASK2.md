@@ -38,8 +38,9 @@ R1's Gi0/0/0/5 faces a host (alpine-1) and is **not** used until Task 3. Leave i
 - OSPF process `1`, area `0`. SR prefix-SID **index = router number**, so the label is `16000 + router number` (R1 = `16001`).
 - Management addresses are `198.18.1.1X` (R1 = `198.18.1.11`) and are not part of this task.
 
-**Starting state.** R1's two core interfaces are already enabled (`no shutdown`) and LLDP is on, so you can
-see your neighbors, but the interfaces have no IP address yet.
+**Starting state.** You enabled R1's two core interfaces in Task 1 (Part 4), and LLDP is on, so you can see your
+neighbors, but the interfaces have no IP address yet. If `show ip interface brief` still shows Gi0/0/0/0 or
+Gi0/0/0/1 as `Shutdown`, enable them first by following Task 1, Part 4.
 
 ---
 
@@ -722,7 +723,7 @@ Your changes are in effect as soon as you `commit`. Review what you configured w
 |---|---|---|
 | Nothing seems to have changed | You did not `commit` | In config mode, `show configuration` lists uncommitted changes |
 | Cannot ping the neighbor | Wrong IP or mask | `show ip interface brief`. A `/31` mask is `255.255.255.254`. Your address must be the `.0` of the pair; the neighbor is `.1` |
-| Interface is `Shutdown` | Not enabled | Core interfaces should already be up. If not, `interface <name>` then `no shutdown` and `commit` |
+| Interface is `Shutdown` | Not enabled | Core interfaces are enabled in Task 1. If not, `interface <name>` then `no shutdown` and `commit` |
 | No OSPF neighbor | Interface missing under OSPF, or wrong area | `show ospf interface brief` should list `Lo0`, `Gi0/0/0/0`, `Gi0/0/0/1` all in area 0 |
 | OSPF stuck in `EXSTART` or `INIT` | Mismatched `network` type, MTU or addressing | `show ospf interface Gi0/0/0/0`. The type should be point-to-point |
 | Routes but no labels | `segment-routing mpls` missing, or no prefix-SID | `show running-config router ospf 1` |
