@@ -11,6 +11,17 @@ Take a backup before and after each device change with `backups/backup-configs.s
 
 ## 2026-11-19
 
+### New "Your Network" pictures for Tasks 2, 3 and 4
+- **Changed:** added `images/network-underlay.png` (the instructor's new diagram, hosts on Gi0/0/0/5 and the seven
+  core links) and pointed the "Your Network" section of `TASK2.md` at it. The diagram was checked against the lab's link
+  table: all labeled interfaces match. The R2-R5 link has no interface labels in the picture.
+- **Task 3:** added `images/network-task3.png` (same diagram with the red port-based PW between R1 Gi0/0/0/5 and R4 Gi0/0/0/5, and
+  the label "Port Based Network = 172.16.1.x/24") and pointed `TASK3.md` at it. The picture still shows alpine-2 with
+  editor selection handles around it.
+- **Task 4:** added `images/network-task4.png` (blue VLAN-based PWs: VLAN 10 R2-R3, VLAN 11 R3-R5, VLAN 12 R5-R6, with the
+  VLAN subnets listed) and pointed `TASK4.md` at it.
+- **`topology.png`:** no guide references it any more; it is still in the repo root.
+
 ### SecureCRT session script added
 - **Added** `securecrt/Create-Sessions.py` and `securecrt/README.md`. Run from SecureCRT (**Script > Run**), the script
   creates 12 SSH2 sessions (user `cisco`, port 22, no stored password) under `Austin Workshop/Routers` (R1-R6,

@@ -39,7 +39,7 @@ signaled with **targeted LDP**, then ping across it.
 
 ## Your Network
 
-![Lab topology](topology.png)
+![Lab topology](images/network-task3.png)
 
 | | R1 | R4 |
 |---|---|---|

@@ -20,7 +20,7 @@ other router and be able to reach it across the SR-MPLS core.
 
 ## Your Network
 
-![Lab topology](topology.png)
+![Lab topology](images/network-underlay.png)
 
 R1 has two core links. These are the only interfaces you configure in this task.
 

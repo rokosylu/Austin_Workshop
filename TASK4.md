@@ -39,7 +39,7 @@ with an address in that VLAN's subnet. The router looks at the VLAN tag and pick
 
 ## Your Network
 
-![Lab topology](topology.png)
+![Lab topology](images/network-task4.png)
 
 | PW | VLAN | Subnet | Routers (PW ends) | Hosts | PW ID |
 |---|---|---|---|---|---|
