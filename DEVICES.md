@@ -104,24 +104,24 @@ SRGB: default 16000-23999. All six routers are PEs, each with one attached alpin
 |---|---|---|---|---|
 | 1 | [TASK1.md](TASK1.md) | IOS XR basics: two-stage commit, abort/clear, rollback, enable R1 core ports, OSPF on XE vs XR | R1 | R1 core ports shut, R2-R6 pre-built |
 | 2 | [TASK2.md](TASK2.md) | Underlay on R1: link IPs, OSPF, SR-MPLS, MPLS OAM, TI-LFA | R1 (R2-R6 pre-built) | Task 1 done: R1 core ports up, no IPs |
-| 3 | TASK3.md (to come) | Pseudowires (LDP-signaled) | All devices | Task 2 complete |
+| 3 | [TASK3.md](TASK3.md) | Port-based pseudowire R1 to R4, LDP-signaled: targeted LDP, AC, xconnect, verification, PW OAM | R1 and R4 | Task 2 done: R1 underlay built, Gi0/0/0/5 shut on R1 and R4 |
 
 ## Configuration Status
 
 | Router | Underlay (link IPs, Loopback0, OSPF 1 area 0, SR-MPLS, MPLS OAM, TI-LFA) | LDP (for PW signaling) | Notes |
 |---|---|---|---|
-| R1 | Built by the student in Task 2 (reference solution in `solutions/task2/R1.cfg`) | Student adds in Task 3 | LLDP on; core ports start shut (enabled in Task 1); Gi0/0/0/5 shut |
+| R1 | Built by the student in Task 2 (reference solution in `solutions/task2/R1.cfg`) | Student adds in Task 3 (`solutions/task3/R1.cfg`) | LLDP on; core ports start shut (enabled in Task 1); Gi0/0/0/5 shut |
 | R2 | Pre-built and verified (`configs/task2-prebuilt/R2.txt`) | Pre-built: `router-id` = Loopback0, `discovery targeted-hello accept` (no LDP on interfaces) | LLDP on, core ports up, Gi0/0/0/5 shut |
 | R3 | Pre-built and verified (`configs/task2-prebuilt/R3.txt`) | Pre-built: `router-id` = Loopback0, `discovery targeted-hello accept` (no LDP on interfaces) | LLDP on, core ports up, Gi0/0/0/5 shut |
 | R4 | Pre-built and verified (`configs/task2-prebuilt/R4.txt`) | Pre-built: `router-id` = Loopback0, `discovery targeted-hello accept` (no LDP on interfaces) | LLDP on, core ports up, Gi0/0/0/5 shut |
 | R5 | Pre-built and verified (`configs/task2-prebuilt/R5.txt`) | Pre-built: `router-id` = Loopback0, `discovery targeted-hello accept` (no LDP on interfaces) | LLDP on, core ports up, Gi0/0/0/5 shut |
 | R6 | Pre-built and verified (`configs/task2-prebuilt/R6.txt`) | Pre-built: `router-id` = Loopback0, `discovery targeted-hello accept` (no LDP on interfaces) | LLDP on, core ports up, Gi0/0/0/5 shut |
 
-All core interfaces have a `description` naming the peer router and port. R1 LDP, the pseudowire (`l2vpn`) and host-port configuration are not done yet (Task 3).
+All core interfaces have a `description` naming the peer router and port. R1 LDP and the pseudowire (`l2vpn`) configuration are built by the student in Task 3 (reference: `solutions/task3/`); the other PWs are not built yet.
 
-## Pseudowires (planned, not configured)
+## Pseudowires
 
-LDP-signaled VPWS (no BGP in core) over the SR-MPLS underlay. Pw-ids and names are decided in Task 3.
+LDP-signaled VPWS (no BGP in core) over the SR-MPLS underlay. PW1 is built in Task 3 (group `PORT_BASED`, pw-id 100); PW2-PW4 are planned.
 
 | PW | Type | PE-A | PE-A attachment circuit | PE-Z | PE-Z attachment circuit | Hosts |
 |---|---|---|---|---|---|---|

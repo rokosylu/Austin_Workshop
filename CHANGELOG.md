@@ -11,6 +11,30 @@ Take a backup before and after each device change with `backups/backup-configs.s
 
 ## 2026-11-19
 
+### Task 3 added: port-based PW between R1 and R4 (PW1)
+- **Added** `TASK3.md` (student guide) and `solutions/task3/R1.cfg`, `solutions/task3/R4.cfg`. Also fixed the header of
+  `solutions/task2/R1.cfg` (said Task 1) and pointed the end of `TASK2.md` at Task 3. `DEVICES.md` task table, PW table and
+  the tracker Pseudowires sheet (PW1: group `PORT_BASED`, pw-id 100) updated.
+- **Design:** R1 adds `mpls ldp` (router-id 1.1.1.1, `discovery targeted-hello accept`; R4 already has it from the baseline),
+  then on both PEs `interface Gi0/0/0/5` with `l2transport` and `no shutdown`, and `l2vpn / xconnect group PORT_BASED /
+  p2p / interface Gi0/0/0/5 / neighbor ipv4 <peer loopback> pw-id 100`. R1 p2p name `R1_to_R4`, R4 `R4_to_R1`.
+- **Tested on the lab (then reverted):** R1 temporarily got the Task 2 solution (plus `no shutdown` on Gi0/0/0/0-1), then the
+  Task 3 config on R1 and R4. Verified: targeted LDP session R1-R4 up; `show l2vpn xconnect` UP/UP/UP; PW label 24014 both
+  ways, `protocol LDP`, `LSP : Up`; `PW(4.4.4.4:100)` in `show mpls forwarding`; **alpine-1 <-> alpine-4 ping 0% loss both
+  ways** with each host holding the other's MAC in `ip neigh`; `ping mpls pseudowire 4.4.4.4 100` 5/5. Before the PW
+  existed alpine-1's ping had 100% loss. With only R1 built, the xconnect showed DN/UP/DN.
+- **Failure captured:** pw-id mismatch (R4 on 101) gave `state is down ( local ready )` with remote label `unknown`;
+  rolled back and the PW came back up. A shut AC showed `state is down (Admin)` in the earlier R2-R3 test.
+- **Not verified / notes:** removing `mpls ldp` from R1 did not take the established PW down within about 30 seconds (it
+  was restored right after), so the guide does not claim a "missing LDP" failure. Outputs in the guide came from these runs;
+  the one change is that R1's AC description was shortened to `to alpine-1 eth1` in the guide (the tested text had
+  extra words in parentheses). The "questions" answers 1-4 are explanations; answer 3 (third host on the port) is untested.
+  The "about 30 minutes" time is an estimate.
+- **Reverted:** R1 rolled back to before the temporary underlay (`rollback configuration to T3-PREP-UNDERLAY`) and R4 to its
+  baseline (`rollback configuration to T3-PW`). Backup `20261119-134348` after the revert is identical to the start state
+  `20261119-132329` for all 12 devices (R1 ports shut again, no LDP/l2vpn). Backup `20261119-133235` was taken before.
+  The commit history on R1 and R4 now has extra commits (labels `T3-*`), so commit IDs will differ from students'.
+
 ### restore-configs.sh now skips the alpine hosts by default
 - **Changed:** with no device named, `backups/restore-configs.sh` restores R1-R6 only. New `-H` flag adds the hosts, and
   naming a host (`alpine-2`) always restores it. Reason: hostname, IPs, VLANs and routes now come from the CML node config

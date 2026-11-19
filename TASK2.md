@@ -804,4 +804,4 @@ mpls oam
 Because R2-R6 were pre-built from the same pattern, you can compare your configuration with a neighbor's.
 Log in to R2 (`198.18.1.12`) and run `show running-config router ospf 1`. Do not change it.
 
-**Next:** Task 3 - Pseudowires.
+**Next:** [Task 3 - Build a Port-Based Pseudowire between R1 and R4](TASK3.md).
