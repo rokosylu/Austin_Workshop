@@ -33,14 +33,34 @@ Router interfaces map from the diagram labels `G0/N` to `GigabitEthernet0/0/0/N`
 
 ## Alpine Hosts (CE)
 
-| Host | eth0 (mgmt) | Gateway | Attached to | Router interface | Host eth1 | Login |
-|---|---|---|---|---|---|---|
-| alpine-1 | 198.18.1.21/24 | 198.18.1.1 | R1 | GigabitEthernet0/0/0/5 | TBD | cisco/cisco |
-| alpine-2 | 198.18.1.22/24 | 198.18.1.1 | R2 | GigabitEthernet0/0/0/5 | TBD | cisco/cisco |
-| alpine-3 | 198.18.1.23/24 | 198.18.1.1 | R3 | GigabitEthernet0/0/0/5 | TBD | cisco/cisco |
-| alpine-4 | 198.18.1.24/24 | 198.18.1.1 | R4 | GigabitEthernet0/0/0/5 | TBD | cisco/cisco |
-| alpine-5 | 198.18.1.25/24 | 198.18.1.1 | R5 | GigabitEthernet0/0/0/5 | TBD | cisco/cisco |
-| alpine-6 | 198.18.1.26/24 | 198.18.1.1 | R6 | GigabitEthernet0/0/0/5 | TBD | cisco/cisco |
+| Host | eth0 (mgmt) | Gateway | Attached to | Router interface | Data addressing (eth1) | Role | Login |
+|---|---|---|---|---|---|---|---|
+| alpine-1 | 198.18.1.21/24 | 198.18.1.1 | R1 | GigabitEthernet0/0/0/5 | eth1: 172.16.1.1/24 (untagged) | End host (port-based PW) | cisco/cisco |
+| alpine-2 | 198.18.1.22/24 | 198.18.1.1 | R2 | GigabitEthernet0/0/0/5 | eth1.10: 192.168.10.2/24 | End host (VLAN 10) | cisco/cisco |
+| alpine-3 | 198.18.1.23/24 | 198.18.1.1 | R3 | GigabitEthernet0/0/0/5 | eth1.10: 192.168.10.3/24; eth1.11: 192.168.11.3/24; ip_forward=1 | Router between VLAN 10 and 11 | cisco/cisco |
+| alpine-4 | 198.18.1.24/24 | 198.18.1.1 | R4 | GigabitEthernet0/0/0/5 | eth1: 172.16.1.4/24 (untagged) | End host (port-based PW) | cisco/cisco |
+| alpine-5 | 198.18.1.25/24 | 198.18.1.1 | R5 | GigabitEthernet0/0/0/5 | eth1.11: 192.168.11.5/24; eth1.12: 192.168.12.5/24; ip_forward=1 | Router between VLAN 11 and 12 | cisco/cisco |
+| alpine-6 | 198.18.1.26/24 | 198.18.1.1 | R6 | GigabitEthernet0/0/0/5 | eth1.12: 192.168.12.6/24 | End host (VLAN 12) | cisco/cisco |
+
+### Host startup configuration (CML node config)
+
+Each alpine node's CML configuration is a shell script run at every boot. It sets the hostname (CML's default
+`hostname inserthostname-here` line would otherwise override it), the eth0 management IP and default route, the eth1
+data addressing (port-based, or VLAN sub-interfaces) and the static routes. The files are in `configs/alpine/`
+(`alpine-1.cfg` to `alpine-6.cfg`). **Not yet tested on the nodes.**
+
+| Host | Static routes | Config file |
+|---|---|---|
+| alpine-1 | none | `configs/alpine/alpine-1.cfg` |
+| alpine-2 | 192.168.11.0/24 and 192.168.12.0/24 via 192.168.10.3 | `configs/alpine/alpine-2.cfg` |
+| alpine-3 | 192.168.12.0/24 via 192.168.11.5 | `configs/alpine/alpine-3.cfg` |
+| alpine-4 | none | `configs/alpine/alpine-4.cfg` |
+| alpine-5 | 192.168.10.0/24 via 192.168.11.3 | `configs/alpine/alpine-5.cfg` |
+| alpine-6 | 192.168.10.0/24 and 192.168.11.0/24 via 192.168.12.5 | `configs/alpine/alpine-6.cfg` |
+
+Addressing: port-based PW `172.16.1.X/24`; VLAN 10 `192.168.10.X/24`; VLAN 11 `192.168.11.X/24`; VLAN 12 `192.168.12.X/24`
+(X = alpine number). alpine-3 and alpine-5 forward IP traffic so alpine-2 and alpine-5/alpine-6 can reach each other
+(alpine-2 - VLAN 10 - alpine-3 - VLAN 11 - alpine-5 - VLAN 12 - alpine-6).
 
 ## Core Links
 
@@ -99,6 +119,13 @@ SRGB: default 16000-23999. All six routers are PEs, each with one attached alpin
 
 All core interfaces have a `description` naming the peer router and port. The pseudowire (LDP) and host-port configuration is not done yet (Task 3).
 
-## Pseudowires
+## Pseudowires (planned, not configured)
 
-To be defined. Planned: LDP-signaled VPWS (no BGP in core), for example alpine-1 to alpine-6 between R1 and R6 using pw-id 100.
+LDP-signaled VPWS (no BGP in core) over the SR-MPLS underlay. Pw-ids and names are decided in Task 3.
+
+| PW | Type | PE-A | PE-A attachment circuit | PE-Z | PE-Z attachment circuit | Hosts |
+|---|---|---|---|---|---|---|
+| PW1 | port-based | R1 | Gi0/0/0/5 port-based (untagged) | R4 | Gi0/0/0/5 port-based (untagged) | alpine-1 172.16.1.1 <-> alpine-4 172.16.1.4 |
+| PW2 | VLAN-tagged | R2 | Gi0/0/0/5 VLAN 10 | R3 | Gi0/0/0/5 VLAN 10 | alpine-2 192.168.10.2 <-> alpine-3 192.168.10.3 |
+| PW3 | VLAN-tagged | R3 | Gi0/0/0/5 VLAN 11 | R5 | Gi0/0/0/5 VLAN 11 | alpine-3 192.168.11.3 <-> alpine-5 192.168.11.5 |
+| PW4 | VLAN-tagged | R6 | Gi0/0/0/5 VLAN 12 | R5 | Gi0/0/0/5 VLAN 12 | alpine-6 192.168.12.6 <-> alpine-5 192.168.12.5 |

@@ -11,6 +11,31 @@ Take a backup before and after each device change with `backups/backup-configs.s
 
 ## 2026-11-19
 
+### Alpine hosts: startup configs moved into CML node config, data addressing and static routes designed
+- **Found:** the alpine hosts' live hostname was `inserthostname-here` after the relaunch. Cause: CML attaches a config
+  disc to each node, and the image's `/etc/local.d/virl2-01-day0config.start` runs its `node.cfg` as a shell script on
+  every boot. The default `hostname inserthostname-here` line in it ran after `/etc/hostname` was applied. (Read-only
+  diagnosis on alpine-1; nothing was changed on the hosts.)
+- **Decision (instructor):** put all host settings in each node's CML configuration, so they survive a wipe or relaunch.
+  The instructor edited the node configs in CML for the hostname; after that the hosts stopped answering ping/SSH (nodes
+  restarting), and `ip addr` showed no address, which is why the IPs were added to the config too.
+- **Added** `configs/alpine/alpine-1.cfg` to `alpine-6.cfg`: hostname, eth0 mgmt IP (198.18.1.2X/24) and default route,
+  eth1 data addressing, static routes, and the `cisco/cisco` account lines CML needs. Design from the instructor's
+  diagram:
+  - Port-based PW alpine-1 <-> alpine-4: `172.16.1.X/24` untagged on eth1.
+  - VLAN PWs on `eth1.<vlan>` (`modprobe 8021q`): VLAN 10 alpine-2 <-> alpine-3 (`192.168.10.X/24`), VLAN 11 alpine-3
+    <-> alpine-5 (`192.168.11.X/24`), VLAN 12 alpine-6 <-> alpine-5 (`192.168.12.X/24`).
+  - alpine-3 and alpine-5 forward IP (`net.ipv4.ip_forward=1`). Static routes let alpine-2 reach alpine-5/6 and back:
+    alpine-2 via 192.168.10.3, alpine-3 to VLAN 12 via 192.168.11.5, alpine-5 to VLAN 10 via 192.168.11.3, alpine-6 via
+    192.168.12.5.
+- **Docs:** tracker Hosts sheet (data addressing, static routes, config file, role) and Pseudowires sheet (planned PW1-PW4,
+  not configured) updated; `DEVICES.md` regenerated with the host startup configuration and planned pseudowires.
+- **Not verified:** the config files passed a shell syntax check (`sh -n`) only. They have not been run on the nodes, and
+  `8021q` VLAN support in the image is unconfirmed. The hosts were still down when this was written. Routers were not
+  touched. Task 3 (the PW configuration itself) has not been started.
+- **Backups:** none taken (no device changes from this side). After the hosts return, take a backup and re-check the
+  hostnames, IPs and routes; the `task1-start`/`task2-start` host baselines hold the old static `/etc/network/interfaces`.
+
 ### Post-outage relaunch: R1 core ports now start shut; Task 1 enables them
 - **Event:** the datacenter had an outage and the lab was checkpointed and relaunched. After reconnecting the VPN,
   all 12 devices answered ping and SSH (cisco/cisco). Routers were up 14 minutes, alpine hosts 18 minutes.
@@ -170,5 +195,5 @@ Take a backup before and after each device change with `backups/backup-configs.s
   loopbacks `R.R.R.R/32`, SR prefix-SID label 16000+R, mgmt `198.18.1.1X`.
 
 ### Not done yet
-- No LDP or pseudowire configuration (Task 2). Alpine eth1 addressing and the PW pairs are not decided.
+- No LDP or pseudowire configuration (Task 2). (Update 2026-11-19: PW pairs and alpine eth1 addressing are now decided; see the top entry.)
 - Host ports Gi0/0/0/5 stay shut down; students enable them in Task 2.
