@@ -501,10 +501,13 @@ LLDP confirms the cabling: R1 Gi0/0/0/0 reaches R2 Gi0/0/0/0, and R1 Gi0/0/0/1 r
 ## Part 5 - OSPF on IOS XE vs IOS XR
 
 If you know IOS or IOS XE, XR will feel familiar but organised differently. Here is the **same basic OSPF
-design for R1** in both. It is what you will build on XR in Task 2: a loopback, two point-to-point /31
-links, OSPF process 1 in area 0, and the loopback passive.
+design for R1** in both: a loopback, two point-to-point /31 links, OSPF process 1 in area 0, and the loopback passive.
 
-### IOS XE (for comparison)
+> **This part is for reading only. Do not type any of these configurations on R1 now.** The XE and XR blocks below are
+> shown side by side so you can *see* how the two platforms differ. You will **enter the XR configuration yourself in
+> [Task 2](TASK2.md)**, step by step, and verify it.
+
+### IOS XE (for comparison only)
 
 ```
 interface Loopback0
@@ -532,7 +535,10 @@ router ospf 1
 
 Every line takes effect as soon as you press Enter.
 
-### IOS XR (what you will use)
+### IOS XR (a preview of what you will enter in Task 2)
+
+This is the XR version of the same design. **Do not enter it now.** In Task 2 you build it in stages
+(addresses, then OSPF) and check each stage before moving on.
 
 ```
 interface Loopback0
@@ -593,8 +599,8 @@ Nothing takes effect until you `commit`.
 > **In the lab:** XR interfaces start shut down unless someone enables them, which is why you enabled R1's two core
 > interfaces in Part 4. On XE the same step is `no shutdown`, and a new router interface often needs it too.
 
-You will configure the XR version yourself in **Task 2**, and you will use `show configuration` and `commit`
-exactly as practised here.
+Nothing in this part changes R1. You will configure the XR version yourself in **Task 2**, and you will use
+`show configuration` and `commit` exactly as practised here.
 
 ---
 

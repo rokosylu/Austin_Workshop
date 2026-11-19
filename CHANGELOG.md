@@ -11,6 +11,11 @@ Take a backup before and after each device change with `backups/backup-configs.s
 
 ## 2026-11-19
 
+### TASK1.md Part 5: made clear the XR config is a preview
+- **Changed:** Part 5 now says up front that it is read-only and that nothing should be typed on R1; the XE block is
+  labeled "for comparison only", the XR block "a preview of what you will enter in Task 2", and the closing line says nothing
+  in the part changes R1. Wording only; no commands changed.
+
 ### SecureCRT: host sessions use password-only login
 - **Found:** SecureCRT could connect to R1-R6 but showed "Keyboard-interactive authentication with the SSH2 server failed" on
   alpine-1..6. Checked from the shell: all six hosts advertise `publickey,password,keyboard-interactive`, accept
