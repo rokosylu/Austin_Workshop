@@ -43,6 +43,11 @@ def create_session(folder, name, host):
     cfg.SetOption("Hostname", host)
     cfg.SetOption("[SSH2] Port", PORT)
     cfg.SetOption("Username", USERNAME)
+    if folder == "Hosts":
+        # The alpine hosts advertise keyboard-interactive login but always reject it
+        # (SecureCRT would show "Keyboard-interactive authentication ... failed").
+        # Plain password login works, so use only that for the hosts.
+        cfg.SetOption("SSH2 Authentications V2", "password")
     cfg.Save(path)
     return path
 

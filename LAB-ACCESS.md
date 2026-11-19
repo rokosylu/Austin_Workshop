@@ -162,6 +162,7 @@ Most tasks use more than one device at the same time, for example R1 and alpine-
 |---|---|---|
 | Connection timed out | VPN not connected, or dropped | Check Cisco Secure Client shows **Connected**, and reconnect (Part 1) |
 | Connection reset or closed straight after you connect | The device was busy | Connect again; wait a minute if it repeats |
+| **Keyboard Interactive Authentication ... failed** window when connecting to an alpine host | The hosts do not accept that login method, only a plain password | Click **Skip** and enter `cisco`. Run `Create-Sessions.py` again so the host sessions use password login only |
 | Password rejected | Typo | The password is `cisco`, all lowercase. Try again |
 | Prompt shows a different router than you expected | Wrong tab | Check the tab name and the prompt before you type |
 | A device that was just started does not answer | It is still booting (the hosts can take a few minutes longer than the routers) | Wait and retry; ask a proctor if it stays down |

@@ -11,6 +11,16 @@ Take a backup before and after each device change with `backups/backup-configs.s
 
 ## 2026-11-19
 
+### SecureCRT: host sessions use password-only login
+- **Found:** SecureCRT could connect to R1-R6 but showed "Keyboard-interactive authentication with the SSH2 server failed" on
+  alpine-1..6. Checked from the shell: all six hosts advertise `publickey,password,keyboard-interactive`, accept
+  `password`, and reject `keyboard-interactive` every time. R1 accepts keyboard-interactive. SecureCRT tries
+  keyboard-interactive before password.
+- **Changed:** `securecrt/Create-Sessions.py` sets `SSH2 Authentications V2` to `password` for the sessions in the `Hosts` folder.
+  Routers are unchanged. `LAB-ACCESS.md` Part 2 troubleshooting and `securecrt/README.md` mention it.
+- **Verified:** the instructor reran the script and confirmed the hosts connect ("that's better"). The root cause on the
+  hosts (why keyboard-interactive fails; probably sshd without PAM) was not investigated and the hosts were not changed.
+
 ### LAB-ACCESS.md moved from SJC to RTP
 - **Changed:** the lab is hosted in the Cisco dCloud RTP data center. Replaced `images/access-vpn-url.png`,
   `access-vpn-credentials.png` and `access-vpn-connected.png` with the RTP screenshots (VPN address

@@ -24,6 +24,8 @@ Running the script again overwrites the sessions with the same names, so it is s
 - The password is deliberately **not** saved in the sessions. SecureCRT asks for it at each login.
 - The script needs a SecureCRT version with Python 3 scripting (9.0 or later). With an older version, create the sessions by hand
   with the table above.
+- The six host sessions are set to password-only login. The alpine hosts advertise keyboard-interactive login but always reject it, which
+  produced the "Keyboard-interactive authentication ... failed" window. The routers accept both methods.
 - To change an address, edit the `DEVICES` list at the top of the script. It matches `XR_PW_Workshop_Tracker.xlsx`.
 - **Status:** tested in SecureCRT by the instructor: the script ran and created the sessions. Connecting from them was not
   tested by the author. If something fails, tell the instructor which message you got.
