@@ -11,6 +11,10 @@ Take a backup before and after each device change with `backups/backup-configs.s
 
 ## 2026-11-19
 
+### Task 3 "Your Network" picture updated
+- **Changed (instructor):** replaced `images/network-task3.png` with a new export of the diagram (the alpine-2 selection handles
+  are gone). `TASK3.md` already pointed at this file, so no text changed.
+
 ### Removed the "(an estimate, not yet timed with a student)" wording
 - **Changed (instructor request):** `TASK3.md` and `TASK4.md` now say just "about 30 minutes" and "about 45 minutes".
   `TASK1.md` and `TASK2.md` already had no qualifier. The times themselves are still estimates; no task has been timed with a student.
