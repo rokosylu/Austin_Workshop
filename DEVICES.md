@@ -47,7 +47,7 @@ Router interfaces map from the diagram labels `G0/N` to `GigabitEthernet0/0/0/N`
 Each alpine node's CML configuration is a shell script run at every boot. It sets the hostname (CML's default
 `hostname inserthostname-here` line would otherwise override it), the eth0 management IP and default route, the eth1
 data addressing (port-based, or VLAN sub-interfaces) and the static routes. The files are in `configs/alpine/`
-(`alpine-1.cfg` to `alpine-6.cfg`). Verified on the nodes (hostname, IPs, VLAN interfaces, routes, forwarding) on 2026-11-19; end-to-end pings need the Task 3 PWs.
+(`alpine-1.cfg` to `alpine-6.cfg`). Verified on the nodes (hostname, IPs, VLAN interfaces, routes, forwarding) on 2026-11-19; end-to-end pings across the PWs were verified when Tasks 3 and 4 were tested.
 
 | Host | Static routes | Config file |
 |---|---|---|
@@ -105,6 +105,7 @@ SRGB: default 16000-23999. All six routers are PEs, each with one attached alpin
 | 1 | [TASK1.md](TASK1.md) | IOS XR basics: two-stage commit, abort/clear, rollback, enable R1 core ports, OSPF on XE vs XR | R1 | R1 core ports shut, R2-R6 pre-built |
 | 2 | [TASK2.md](TASK2.md) | Underlay on R1: link IPs, OSPF, SR-MPLS, MPLS OAM, TI-LFA | R1 (R2-R6 pre-built) | Task 1 done: R1 core ports up, no IPs |
 | 3 | [TASK3.md](TASK3.md) | Port-based pseudowire R1 to R4, LDP-signaled: targeted LDP, AC, xconnect, verification, PW OAM | R1 and R4 | Task 2 done: R1 underlay built, Gi0/0/0/5 shut on R1 and R4 |
+| 4 | [TASK4.md](TASK4.md) | VLAN-based pseudowires: `Gi0/0/0/5.<vlan>` sub-interfaces, VLANs 10/11/12 chained alpine-2 to alpine-6 | R2, R3, R5, R6 | Baseline: Gi0/0/0/5 shut on those routers, LDP already there |
 
 ## Configuration Status
 
@@ -117,11 +118,11 @@ SRGB: default 16000-23999. All six routers are PEs, each with one attached alpin
 | R5 | Pre-built and verified (`configs/task2-prebuilt/R5.txt`) | Pre-built: `router-id` = Loopback0, `discovery targeted-hello accept` (no LDP on interfaces) | LLDP on, core ports up, Gi0/0/0/5 shut |
 | R6 | Pre-built and verified (`configs/task2-prebuilt/R6.txt`) | Pre-built: `router-id` = Loopback0, `discovery targeted-hello accept` (no LDP on interfaces) | LLDP on, core ports up, Gi0/0/0/5 shut |
 
-All core interfaces have a `description` naming the peer router and port. R1 LDP and the pseudowire (`l2vpn`) configuration are built by the student in Task 3 (reference: `solutions/task3/`); the other PWs are not built yet.
+All core interfaces have a `description` naming the peer router and port. R1 LDP and PW1 are built by the student in Task 3 (`solutions/task3/`); PW2-PW4 in Task 4 (`solutions/task4/`).
 
 ## Pseudowires
 
-LDP-signaled VPWS (no BGP in core) over the SR-MPLS underlay. PW1 is built in Task 3 (group `PORT_BASED`, pw-id 100); PW2-PW4 are planned.
+LDP-signaled VPWS (no BGP in core) over the SR-MPLS underlay. PW1 is built in Task 3 (group `PORT_BASED`, pw-id 100); PW2-PW4 are built in Task 4 (group `VLAN_BASED`, pw-id = VLAN).
 
 | PW | Type | PE-A | PE-A attachment circuit | PE-Z | PE-Z attachment circuit | Hosts |
 |---|---|---|---|---|---|---|

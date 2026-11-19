@@ -11,6 +11,31 @@ Take a backup before and after each device change with `backups/backup-configs.s
 
 ## 2026-11-19
 
+### Task 4 added: VLAN-based PWs (PW2-PW4) on R2, R3, R5, R6
+- **Added** `TASK4.md` and `solutions/task4/R2.cfg`, `R3.cfg`, `R5.cfg`, `R6.cfg`. `TASK3.md` now points to Task 4.
+  `DEVICES.md` task and PW tables and the tracker Pseudowires sheet (PW2-PW4) updated.
+- **Design (from the instructor's diagram):** on each PE `Gi0/0/0/5` gets `no shutdown` (not `l2transport`), plus one
+  `Gi0/0/0/5.<vlan> l2transport` sub-interface per VLAN with `encapsulation dot1q <vlan>`, and `l2vpn / xconnect group
+  VLAN_BASED / p2p VLAN<n>` with the peer loopback and pw-id = VLAN. VLAN 10 R2-R3, VLAN 11 R3-R5, VLAN 12 R5-R6; R3 and R5
+  carry two VLANs on one port. LDP comes from the baseline, so nothing is added for it.
+- **Tested on the lab (then reverted):** all three xconnects UP/UP/UP, LDP sessions up (R3 and R5 have two each),
+  `PW(...)` entries tied to the sub-interfaces, `ping mpls pseudowire` 5/5 on R2 and R3. Hosts: alpine-2 to alpine-3,
+  alpine-3 to alpine-5 and alpine-5 to alpine-6 all 0% loss with MACs in `ip neigh`. **End to end alpine-2 <-> alpine-6
+  0% loss both ways**; traceroute from alpine-2 shows 192.168.10.3, 192.168.11.5, 192.168.12.6. alpine-5 to alpine-2 and
+  alpine-6 to alpine-3 also work, so the static routes and forwarding on alpine-3/5 from `configs/alpine/` are confirmed.
+  alpine-2 cannot reach the Task 3 island 172.16.1.1 (100% loss), as expected. Before the build, alpine-2 to alpine-3 had
+  100% loss.
+- **Observed:** `show l2vpn xconnect detail` on a VLAN AC shows `Type VLAN`, `VLAN ranges: [10, 10]`, `Rewrite Tags: []`
+  and `MTU 1504` (1500 on the port-based AC), so the tag crosses the PW unchanged.
+- **Failures captured (rolled back):** wrong VLAN on R6 (`dot1q 99`): xconnect and PW stay UP/UP/UP but alpine-5 to
+  alpine-6 gets 100% loss. Parent port shut on R6: `AC ... state is down (Admin)`, xconnect DN. Restored; alpine-5 to
+  alpine-6 pings again.
+- **Not verified:** the explanations of two shut parents dropping both PWs (R3, R5) and the answers to the guide questions
+  are reasoning, not tests. The "about 45 minutes" time is an estimate. I did not capture the R3 half-built output, so
+  the guide describes it in words.
+- **Reverted:** `rollback configuration to T4-VLAN-PW` on R2, R3, R5, R6. Backup `20261119-140639` is identical to the start
+  state `20261119-132329` for all 12 devices. R2/R3/R5/R6 now have extra `T4-*` commits in their history.
+
 ### Task 3 added: port-based PW between R1 and R4 (PW1)
 - **Added** `TASK3.md` (student guide) and `solutions/task3/R1.cfg`, `solutions/task3/R4.cfg`. Also fixed the header of
   `solutions/task2/R1.cfg` (said Task 1) and pointed the end of `TASK2.md` at Task 3. `DEVICES.md` task table, PW table and
