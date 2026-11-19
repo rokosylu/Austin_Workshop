@@ -160,6 +160,8 @@ mpls ldp
 show configuration
 ```
 
+Nothing is applied yet. `show configuration` lists only what you have staged, and you will see this output **before** you commit:
+
 ```
 RP/0/RP0/CPU0:R1(config)#show configuration
 !! IOS XR Configuration 25.1.1
@@ -174,7 +176,7 @@ end
 
 > **Note:** `discovery targeted-hello accept` must be inside `address-family ipv4`. If you type it directly under `mpls ldp`, XR answers `Invalid input`.
 
-Apply it:
+Only when the output matches what you intended, apply it:
 
 ```
 commit
@@ -238,6 +240,8 @@ l2vpn
 show configuration
 ```
 
+Nothing is applied yet. `show configuration` lists only what you have staged, and you will see this output **before** you commit:
+
 ```
 RP/0/RP0/CPU0:R1(config-l2vpn)#show configuration
 !! IOS XR Configuration 25.1.1
@@ -259,7 +263,7 @@ l2vpn
 end
 ```
 
-Notice the `shutdown` line is gone. `no shutdown` removes it from the configuration instead of adding a new line. Apply:
+Notice the `shutdown` line is gone. `no shutdown` removes it from the configuration instead of adding a new line. Check the output above, then apply:
 
 ```
 commit

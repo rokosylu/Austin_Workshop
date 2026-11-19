@@ -91,6 +91,12 @@ IOS XR does not apply changes the moment you type them. The workflow is:
 > **Remember to `commit`.** The most common mistake on XR is typing the commands and forgetting `commit`.
 > If nothing seems to work, run `show configuration` in config mode. Anything listed there has not been applied yet.
 
+> **`show configuration` only shows what is waiting to be committed.** Run it **before** `commit`, and read it. Once you
+> `commit`, nothing is pending any more, so those lines no longer appear (use `show running-config` to see what is
+> applied). Every step below follows the same pattern: type the commands, run `show configuration`, compare the
+> output with the example shown **below the commands**, and only then `commit`. Do not paste `commit` together with the
+> commands, or you will skip the check.
+
 ---
 
 ## Step 1 - Loopback and link IP addresses
@@ -115,7 +121,8 @@ interface GigabitEthernet0/0/0/1
 show configuration
 ```
 
-Check that the output matches what you intended:
+`show configuration` prints what you have staged but not yet committed. It should look like this. Compare it with
+what you intended **before** you commit:
 
 ```
 interface Loopback0
@@ -133,7 +140,7 @@ interface GigabitEthernet0/0/0/1
 end
 ```
 
-Apply it:
+Only when it matches, apply it:
 
 ```
 commit
@@ -207,6 +214,31 @@ router ospf 1
   exit
  exit
 show configuration
+```
+
+Before you commit, check the output. This is what `show configuration` prints for this step:
+
+```
+router ospf 1
+ router-id 1.1.1.1
+ area 0
+  interface Loopback0
+   passive enable
+  !
+  interface GigabitEthernet0/0/0/0
+   network point-to-point
+  !
+  interface GigabitEthernet0/0/0/1
+   network point-to-point
+  !
+ !
+!
+end
+```
+
+Only when it matches, apply it:
+
+```
 commit
 end
 ```
@@ -302,11 +334,9 @@ router ospf 1
   exit
  exit
 show configuration
-commit
-end
 ```
 
-You should see:
+After `show configuration` (and **before** you commit) you should see:
 
 ```
 router ospf 1
@@ -317,6 +347,13 @@ router ospf 1
   !
  !
 !
+end
+```
+
+Only when it matches, apply it:
+
+```
+commit
 end
 ```
 
@@ -434,13 +471,20 @@ configure terminal
 mpls oam
  exit
 show configuration
-commit
-end
 ```
+
+After `show configuration` (and **before** you commit) you should see:
 
 ```
 mpls oam
 !
+end
+```
+
+Only when it matches, apply it:
+
+```
+commit
 end
 ```
 
@@ -534,9 +578,9 @@ router ospf 1
   exit
  exit
 show configuration
-commit
-end
 ```
+
+After `show configuration` (and **before** you commit) you should see:
 
 ```
 router ospf 1
@@ -551,6 +595,13 @@ router ospf 1
   !
  !
 !
+end
+```
+
+Only when it matches, apply it:
+
+```
+commit
 end
 ```
 

@@ -142,6 +142,8 @@ l2vpn
 show configuration
 ```
 
+Nothing is applied yet. `show configuration` lists only what you have staged, and you will see this output **before** you commit:
+
 ```
 RP/0/RP0/CPU0:R2(config-l2vpn)#show configuration
 !! IOS XR Configuration 25.1.1
@@ -168,6 +170,8 @@ end
 > **Compare with Task 3.** There, `l2transport` sat *inside* `interface Gi0/0/0/5`. Here it is part of the sub-interface
 > name, on the same line: `interface Gi0/0/0/5.10 l2transport`. The sub-interface number (`.10`) is only a label. It is
 > `encapsulation dot1q 10` that decides which VLAN is matched. We use the same number for both so it is easy to read.
+
+Only when the output matches what you intended, apply it:
 
 ```
 commit
@@ -231,6 +235,8 @@ l2vpn
 show configuration
 ```
 
+Nothing is applied yet. `show configuration` lists only what you have staged, and you will see this output **before** you commit:
+
 ```
 RP/0/RP0/CPU0:R3(config-l2vpn)#show configuration
 !! IOS XR Configuration 25.1.1
@@ -265,6 +271,8 @@ end
 
 This is the key idea of the task: one physical port, two pseudowires going to **different** routers. The router splits the traffic by VLAN tag.
 That is not possible with a port-based PW.
+
+Only when the output matches what you intended, apply it:
 
 ```
 commit

@@ -11,6 +11,22 @@ Take a backup before and after each device change with `backups/backup-configs.s
 
 ## 2026-11-19
 
+### Tasks 2-4: show the `show configuration` output before the commit
+- **Reason (instructor):** in TASK2 Steps 2-5 the staged commands, `show configuration`, `commit` and `end` were in one
+  code block, so a student who pastes it commits straight away and never sees the output block (and after a commit
+  `show configuration` no longer lists those lines).
+- **Changed `TASK2.md`:** Steps 2-5 now end the first block at `show configuration`, say that the output below is what you
+  will see before you commit, and have a separate "Only when it matches, apply it" `commit` / `end` block, as Step 1
+  already did. Step 2 gained the expected output, which I captured from R1 by staging the commands and running `abort`
+  (nothing was committed). The Recap section explains that `show configuration` only lists uncommitted changes; Step 1
+  wording matches.
+- **Changed `TASK3.md` and `TASK4.md`:** these already kept `commit` separate; added a sentence before the `show configuration`
+  output ("you will see this output before you commit") and "only when the output matches" before the commit blocks.
+  `TASK1.md` already did this (Parts 1 and 4) and is unchanged. A scan finds no `show configuration` immediately followed by
+  `commit` in any task.
+- **Observed while capturing:** R1 already had OSPF and SR configured (the instructor working through Task 2), so the lab
+  was not at the start state at that time. Nothing was committed or changed by me on R1.
+
 ### TASK1.md Part 5: made clear the XR config is a preview
 - **Changed:** Part 5 now says up front that it is read-only and that nothing should be typed on R1; the XE block is
   labeled "for comparison only", the XR block "a preview of what you will enter in Task 2", and the closing line says nothing
