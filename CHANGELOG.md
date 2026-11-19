@@ -17,8 +17,8 @@ Take a backup before and after each device change with `backups/backup-configs.s
   `dcloud-rtp-anyconnect.cisco.com`). `access-vpn-app.png` (the app icon) is unchanged. In `LAB-ACCESS.md` the VPN Address row
   now shows the RTP address, the pod-specific note in Step 2 names it, Step 3 mentions the **Anyconnect-to-dCloud** group
   shown in the new screenshot, and Step 4 refers to the RTP(US) banner. No other file mentions SJC.
-- **Note:** the credentials screenshot shows the instructor's pod username, which is a pod-specific example.
-  Students use the values on their own credential sheet.
+- **Follow-up:** the first RTP credentials screenshot showed the instructor's pod username, so `access-vpn-credentials.png` was
+  replaced with an empty dialog (no username or password). The earlier screenshot is still in git history (commit `419e363`).
 
 ### LAB-ACCESS.md Part 2 drafted (SecureCRT)
 - **Added** Part 2 to `LAB-ACCESS.md`: device table with addresses, running `securecrt/Create-Sessions.py`, connecting to R1,
