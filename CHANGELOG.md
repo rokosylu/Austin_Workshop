@@ -16,9 +16,12 @@ Take a backup before and after each device change with `backups/backup-configs.s
   creates 12 SSH2 sessions (user `cisco`, port 22, no stored password) under `Austin Workshop/Routers` (R1-R6,
   198.18.1.11-16) and `Austin Workshop/Hosts` (alpine-1..6, 198.18.1.21-26). Addresses match the tracker.
 - **Decision (instructor):** all students use SecureCRT.
-- **Verified:** the script ran against a mock of the `crt` scripting API and produced the expected 12 sessions with the
-  right host, user, port and protocol. **Not run in SecureCRT itself** (not available here), so the folder creation by
-  `Save`, the Python 3 requirement (SecureCRT 9.0 or later) and the connection behaviour are unconfirmed.
+- **Fixes after the first real runs (instructor in SecureCRT):** (1) "Invalid character encountered in script header at
+  line 4": SecureCRT reads every leading `#` line as a header directive, so the description moved into a docstring after
+  a blank line. (2) "The session option was not found: Port": the SSH2 port option is named `[SSH2] Port`. My mock
+  had accepted any option name, which hid this; it now rejects unknown names.
+- **Verified:** after those fixes the instructor ran it in SecureCRT and it created the sessions. Connecting to the devices
+  from those sessions was not reported by me, and the Python 3 / SecureCRT version requirement is unconfirmed.
 - **Not done:** `LAB-ACCESS.md` Part 2 (device access) still needs to be written; it can now point at this script.
 
 ### Task 4 added: VLAN-based PWs (PW2-PW4) on R2, R3, R5, R6

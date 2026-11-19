@@ -25,6 +25,5 @@ Running the script again overwrites the sessions with the same names, so it is s
 - The script needs a SecureCRT version with Python 3 scripting (9.0 or later). With an older version, create the sessions by hand
   with the table above.
 - To change an address, edit the `DEVICES` list at the top of the script. It matches `XR_PW_Workshop_Tracker.xlsx`.
-- **Status:** the script's logic was tested against a stand-in for the SecureCRT scripting API, which printed the
-  expected 12 sessions. It has **not** been run in SecureCRT itself yet. If it fails when you try it,
-  tell the instructor which message you got.
+- **Status:** tested in SecureCRT by the instructor: the script ran and created the sessions. Connecting from them was not
+  tested by the author. If something fails, tell the instructor which message you got.
