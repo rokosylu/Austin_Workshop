@@ -7,12 +7,15 @@
 #            (needs root, sudo or doas on the host), then "lbu commit" if present.
 #            Network changes take effect after: rc-service networking restart (or reboot).
 #
-# Usage: ./restore-configs.sh [-d backup_dir] [-n] [-r] [-y] [device ...]
+# Usage: ./restore-configs.sh [-d backup_dir] [-n] [-r] [-y] [-H] [device ...]
 #   -d DIR   backup folder to restore from (default: ./latest next to this script)
 #   -n       dry run: show what would be restored, change nothing
 #   -r       routers only: REPLACE the entire running config instead of merging
 #   -y       do not ask for confirmation
-#   device   any of R1..R6 alpine-1..alpine-6 (default: every device that has a .cfg in DIR)
+#   -H       also restore the alpine hosts when no device is named (default: routers only,
+#            because the hosts get hostname, IPs, VLANs and routes from their CML node config,
+#            see configs/alpine/ - restoring old /etc files over them would break that)
+#   device   any of R1..R6 alpine-1..alpine-6 (default: R1-R6 that have a .cfg in DIR; naming a host always restores it)
 #
 # Examples:
 #   ./restore-configs.sh -n                      # dry run, everything
@@ -34,11 +37,11 @@ ip_of() {
 ORDER=(R1 R2 R3 R4 R5 R6 alpine-1 alpine-2 alpine-3 alpine-4 alpine-5 alpine-6)
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-DIR="$SCRIPT_DIR/latest"; DRY=0; REPLACE=0; YES=0
-while getopts "d:nry" o; do
+DIR="$SCRIPT_DIR/latest"; DRY=0; REPLACE=0; YES=0; HOSTS=0
+while getopts "d:nryH" o; do
   case $o in
     d) if [ -d "$OPTARG" ]; then DIR="$OPTARG"; else DIR="$SCRIPT_DIR/$OPTARG"; fi ;;
-    n) DRY=1 ;; r) REPLACE=1 ;; y) YES=1 ;;
+    n) DRY=1 ;; r) REPLACE=1 ;; y) YES=1 ;; H) HOSTS=1 ;;
     *) sed -n '2,25p' "$0"; exit 2 ;;
   esac
 done
@@ -53,7 +56,11 @@ SEL=()
 if [ $# -gt 0 ]; then
   for d in "$@"; do [ -n "$(ip_of "$d")" ] || { echo "Unknown device: $d"; exit 2; }; SEL+=("$d"); done
 else
-  for d in "${ORDER[@]}"; do [ -f "$DIR/$d.cfg" ] && SEL+=("$d"); done
+  for d in "${ORDER[@]}"; do
+    case $d in alpine-*) [ $HOSTS -eq 1 ] || continue ;; esac
+    [ -f "$DIR/$d.cfg" ] && SEL+=("$d")
+  done
+  [ $HOSTS -eq 1 ] || echo "Note: alpine hosts skipped (their settings come from the CML node config). Use -H or name a host to restore them."
 fi
 for d in "${SEL[@]}"; do [ -s "$DIR/$d.cfg" ] || { echo "Missing or empty backup: $DIR/$d.cfg"; exit 1; }; done
 [ ${#SEL[@]} -gt 0 ] || { echo "No backups found in $DIR"; exit 1; }

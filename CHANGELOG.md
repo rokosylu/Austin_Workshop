@@ -11,6 +11,13 @@ Take a backup before and after each device change with `backups/backup-configs.s
 
 ## 2026-11-19
 
+### restore-configs.sh now skips the alpine hosts by default
+- **Changed:** with no device named, `backups/restore-configs.sh` restores R1-R6 only. New `-H` flag adds the hosts, and
+  naming a host (`alpine-2`) always restores it. Reason: hostname, IPs, VLANs and routes now come from the CML node config
+  (`configs/alpine/`), and restoring the default `/etc` files over them would break that.
+- **Verified:** dry runs only (`-n`): default lists R1-R6 with a note, `-H` lists all 12, `alpine-2` alone lists the host.
+  No device was changed, and a real restore with the new logic was not run.
+
 ### Student start baseline confirmed (`task1-start`)
 - **Confirmed:** the current lab state (backup `20261119-132329`, `backups/latest`) is the student start state. R1 has its
   core ports shut and no underlay; R2-R6 are pre-built (underlay, `mpls oam`, TI-LFA, targeted LDP); the hosts take their
