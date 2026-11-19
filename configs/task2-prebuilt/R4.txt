@@ -33,5 +33,11 @@ router ospf 1
  exit
 mpls oam
  exit
+mpls ldp
+ router-id 4.4.4.4
+ address-family ipv4
+  discovery targeted-hello accept
+  exit
+ exit
 commit
 end

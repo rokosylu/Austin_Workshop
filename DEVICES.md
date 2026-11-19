@@ -108,14 +108,14 @@ SRGB: default 16000-23999. All six routers are PEs, each with one attached alpin
 
 ## Configuration Status
 
-| Router | Underlay (link IPs, Loopback0, OSPF 1 area 0, SR-MPLS, MPLS OAM, TI-LFA) | Notes |
-|---|---|---|
-| R1 | Built by the student in Task 2 (reference solution in `solutions/task2/R1.cfg`) | LLDP on; core ports start shut (enabled in Task 1); Gi0/0/0/5 shut |
-| R2 | Pre-built and verified (`configs/task2-prebuilt/R2.txt`) | LLDP on, core ports up, Gi0/0/0/5 shut |
-| R3 | Pre-built and verified (`configs/task2-prebuilt/R3.txt`) | LLDP on, core ports up, Gi0/0/0/5 shut |
-| R4 | Pre-built and verified (`configs/task2-prebuilt/R4.txt`) | LLDP on, core ports up, Gi0/0/0/5 shut |
-| R5 | Pre-built and verified (`configs/task2-prebuilt/R5.txt`) | LLDP on, core ports up, Gi0/0/0/5 shut |
-| R6 | Pre-built and verified (`configs/task2-prebuilt/R6.txt`) | LLDP on, core ports up, Gi0/0/0/5 shut |
+| Router | Underlay (link IPs, Loopback0, OSPF 1 area 0, SR-MPLS, MPLS OAM, TI-LFA) | LDP (for PW signaling) | Notes |
+|---|---|---|---|
+| R1 | Built by the student in Task 2 (reference solution in `solutions/task2/R1.cfg`) | Student adds in Task 3 | LLDP on; core ports start shut (enabled in Task 1); Gi0/0/0/5 shut |
+| R2 | Pre-built and verified (`configs/task2-prebuilt/R2.txt`) | Pre-built: `router-id` = Loopback0, `discovery targeted-hello accept` (no LDP on interfaces) | LLDP on, core ports up, Gi0/0/0/5 shut |
+| R3 | Pre-built and verified (`configs/task2-prebuilt/R3.txt`) | Pre-built: `router-id` = Loopback0, `discovery targeted-hello accept` (no LDP on interfaces) | LLDP on, core ports up, Gi0/0/0/5 shut |
+| R4 | Pre-built and verified (`configs/task2-prebuilt/R4.txt`) | Pre-built: `router-id` = Loopback0, `discovery targeted-hello accept` (no LDP on interfaces) | LLDP on, core ports up, Gi0/0/0/5 shut |
+| R5 | Pre-built and verified (`configs/task2-prebuilt/R5.txt`) | Pre-built: `router-id` = Loopback0, `discovery targeted-hello accept` (no LDP on interfaces) | LLDP on, core ports up, Gi0/0/0/5 shut |
+| R6 | Pre-built and verified (`configs/task2-prebuilt/R6.txt`) | Pre-built: `router-id` = Loopback0, `discovery targeted-hello accept` (no LDP on interfaces) | LLDP on, core ports up, Gi0/0/0/5 shut |
 
 All core interfaces have a `description` naming the peer router and port. The pseudowire (LDP) and host-port configuration is not done yet (Task 3).
 
