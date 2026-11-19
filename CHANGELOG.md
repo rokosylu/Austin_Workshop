@@ -11,6 +11,15 @@ Take a backup before and after each device change with `backups/backup-configs.s
 
 ## 2026-11-19
 
+### LAB-ACCESS.md moved from SJC to RTP
+- **Changed:** the lab is hosted in the Cisco dCloud RTP data center. Replaced `images/access-vpn-url.png`,
+  `access-vpn-credentials.png` and `access-vpn-connected.png` with the RTP screenshots (VPN address
+  `dcloud-rtp-anyconnect.cisco.com`). `access-vpn-app.png` (the app icon) is unchanged. In `LAB-ACCESS.md` the VPN Address row
+  now shows the RTP address, the pod-specific note in Step 2 names it, Step 3 mentions the **Anyconnect-to-dCloud** group
+  shown in the new screenshot, and Step 4 refers to the RTP(US) banner. No other file mentions SJC.
+- **Note:** the credentials screenshot shows the instructor's pod username, which is a pod-specific example.
+  Students use the values on their own credential sheet.
+
 ### LAB-ACCESS.md Part 2 drafted (SecureCRT)
 - **Added** Part 2 to `LAB-ACCESS.md`: device table with addresses, running `securecrt/Create-Sessions.py`, connecting to R1,
   checking the prompt, connecting to a host, tips for working with several tabs, which devices each task uses, and a

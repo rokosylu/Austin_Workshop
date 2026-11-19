@@ -12,7 +12,7 @@ You should have received a **lab credential sheet** with the following informati
 
 | Item | Value |
 |------|-------|
-| **VPN Address** | e.g. `dcloud-sjc-anyconnect.cisco.com` |
+| **VPN Address** | `dcloud-rtp-anyconnect.cisco.com` (Cisco dCloud RTP) |
 | **VPN Username** | _(on your credential sheet)_ |
 | **VPN Password** | _(on your credential sheet)_ |
 | **Lab access method** | SecureCRT (Part 2) |
@@ -39,13 +39,13 @@ The Cisco Secure Client window opens. In the address bar, enter the VPN URL from
 
 ![Enter VPN URL](images/access-vpn-url.png)
 
-> **Your VPN address is pod-specific** — use the address on your credential sheet, not the one shown in the screenshot.
+> **The lab is hosted in the Cisco dCloud RTP data center.** Use the address `dcloud-rtp-anyconnect.cisco.com`. If your credential sheet shows a different address, use the one on your sheet.
 
 ---
 
 ### Step 3 — Enter Your Credentials
 
-A login dialog will appear. Enter your pod username and password from your credential sheet, then click **OK**.
+A login dialog will appear. Leave the group as **Anyconnect-to-dCloud**. Enter your pod username and password from your credential sheet, then click **OK**.
 
 ![Enter VPN credentials](images/access-vpn-credentials.png)
 
@@ -55,7 +55,7 @@ A login dialog will appear. Enter your pod username and password from your crede
 
 ### Step 4 — Accept the Connected Dialog
 
-A confirmation dialog appears saying you are connected to the Cisco dCloud platform. Click **Accept**.
+A banner appears saying you are connected to the Cisco dCloud RTP(US) Platform. Click **Accept**.
 
 ![VPN connected confirmation](images/access-vpn-connected.png)
 
