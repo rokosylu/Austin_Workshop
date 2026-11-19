@@ -11,6 +11,17 @@ Take a backup before and after each device change with `backups/backup-configs.s
 
 ## 2026-11-19
 
+### Student start baseline confirmed (`task1-start`)
+- **Confirmed:** the current lab state (backup `20261119-132329`, `backups/latest`) is the student start state. R1 has its
+  core ports shut and no underlay; R2-R6 are pre-built (underlay, `mpls oam`, TI-LFA, targeted LDP); the hosts take their
+  settings from the CML node configs in `configs/alpine/`.
+- **Found:** the hosts' on-disk files are back to CML defaults (hostname `localhost`, eth0 DHCP), so the old host files in
+  the baselines were stale. The R1 and R2-R6 files in `backups/baselines/task1-start` match the current backup exactly.
+- **Changed (local, git-ignored):** refreshed the host and R2-R6 files in `backups/baselines/task1-start` and
+  `task2-start`, and added README warnings: restore routers only (`restore-configs.sh -d baselines/task1-start R2 R3 R4 R5 R6`),
+  never the hosts, because the restore script would write the default files over the node-config settings.
+- **Not done:** `restore-configs.sh` itself still restores hosts when asked; I did not change it.
+
 ### Alpine node configs verified on the nodes
 - **Checked (read-only, all six hosts, up 14-16 minutes after the CML config change):** hostnames are `alpine-1` to
   `alpine-6` (the `inserthostname-here` problem is fixed), eth0 has 198.18.1.2X/24 with default via 198.18.1.1, eth1 /
