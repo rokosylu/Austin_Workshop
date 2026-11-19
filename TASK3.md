@@ -105,7 +105,7 @@ RP/0/RP0/CPU0:R1#show running-config mpls ldp
 Now log in to **alpine-1** (`ssh cisco@198.18.1.21`, password `cisco`) in a second window and try to reach alpine-4. It cannot work yet:
 
 ```
-ping -c 3 -W 2 172.16.1.4
+ping -c 3 172.16.1.4
 ```
 
 ```
@@ -319,7 +319,7 @@ Your timestamp will differ.
 Now try the ping from alpine-1 again. Still no luck:
 
 ```
-ping -c 3 -W 2 172.16.1.4
+ping -c 3 172.16.1.4
 ```
 
 ```

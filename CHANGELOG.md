@@ -11,6 +11,11 @@ Take a backup before and after each device change with `backups/backup-configs.s
 
 ## 2026-11-19
 
+### Host pings: removed `-W 2`
+- **Changed (instructor):** removed `-W 2` from the five alpine `ping` commands in `TASK3.md` and `TASK4.md` (the ones expected
+  to fail); `-c` stays on all host pings. A failing ping now waits for the default timeout before showing the summary.
+  (I had used `-W 2` in my scripted tests so they would not hang.)
+
 ### Task 3 "Your Network" picture updated
 - **Changed (instructor):** replaced `images/network-task3.png` with a new export of the diagram (the alpine-2 selection handles
   are gone). `TASK3.md` already pointed at this file, so no text changed.

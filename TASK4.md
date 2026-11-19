@@ -96,7 +96,7 @@ LDP is there, and the port is shut. On **alpine-2** (`ssh cisco@198.18.1.22`) lo
 ```
 ip -4 addr show eth1.10
 ip route | grep 192.168
-ping -c 3 -W 2 192.168.10.3
+ping -c 3 192.168.10.3
 ```
 
 ```
@@ -484,7 +484,7 @@ The pseudowire from Task 3 (alpine-1 and alpine-4, `172.16.1.0/24`) is a differe
 alpine-2:
 
 ```
-ping -c 2 -W 2 172.16.1.1
+ping -c 2 172.16.1.1
 ```
 
 ```
@@ -553,7 +553,7 @@ show l2vpn xconnect detail
 Everything is `UP`. Yet from alpine-5:
 
 ```
-ping -c 3 -W 2 192.168.12.6
+ping -c 3 192.168.12.6
 ```
 
 ```
