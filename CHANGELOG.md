@@ -11,6 +11,10 @@ Take a backup before and after each device change with `backups/backup-configs.s
 
 ## 2026-11-19
 
+### TASK4.md Step 0: removed leading spaces on the first output line
+- **Changed (instructor):** the `inet 192.168.10.2/24 ...` line in Step 0 was indented four spaces (copied verbatim from the host's
+  `ip addr` output). It now lines up with the other output lines. It was the only such line in the guides.
+
 ### Finished configurations moved to ANSWERS.md
 - **Reason (instructor):** students could not find the answer when stuck (Task 4 Step 3 said "at the end of this guide", where it sat
   inside a collapsed box about 270 lines further down).

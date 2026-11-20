@@ -100,7 +100,7 @@ ping -c 3 192.168.10.3
 ```
 
 ```
-    inet 192.168.10.2/24 scope global eth1.10
+inet 192.168.10.2/24 scope global eth1.10
 192.168.10.0/24 dev eth1.10 scope link  src 192.168.10.2
 192.168.11.0/24 via 192.168.10.3 dev eth1.10
 192.168.12.0/24 via 192.168.10.3 dev eth1.10
