@@ -1,12 +1,14 @@
 # Task 2 - Build the Underlay on R1
 
-> **Prerequisite:** complete [Task 1 - IOS XR Basics](TASK1.md) first. This task assumes you know how `commit`, `abort` and `rollback` work.
+!!! info ""
+    **Prerequisite:** complete [Task 1 - IOS XR Basics](TASK1.md) first. This task assumes you know how `commit`, `abort` and `rollback` work.
 
 **Goal:** configure **R1** so it joins the existing network: IP addressing, OSPF, and Segment Routing (SR-MPLS).
 Routers **R2-R6 are already configured**. Do not change them. When you finish, R1 will see every
 other router and be able to reach it across the SR-MPLS core.
 
 **What you will learn**
+
 - The IOS XR configuration workflow (`configure`, `show configuration`, `commit`)
 - Configuring a loopback and point-to-point /31 links
 - Enabling OSPF and Segment Routing on an XR router
@@ -33,6 +35,7 @@ R1 has two core links. These are the only interfaces you configure in this task.
 R1's Gi0/0/0/5 faces a host (alpine-1) and is **not** used until Task 3. Leave it shut down.
 
 **Addressing rules used in this lab**
+
 - Links use `10.<lower router>.<higher router>.<n>/31`. The lower-numbered router gets the even address.
 - Each router's loopback is `R.R.R.R/32` (R1 = `1.1.1.1`).
 - OSPF process `1`, area `0`. SR prefix-SID **index = router number**, so the label is `16000 + router number` (R1 = `16001`).
@@ -88,14 +91,16 @@ IOS XR does not apply changes the moment you type them. The workflow is:
 | `abort` | Throw the candidate configuration away and leave config mode. |
 | `end` | Leave config mode (XR asks to commit if you have uncommitted changes). |
 
-> **Remember to `commit`.** The most common mistake on XR is typing the commands and forgetting `commit`.
-> If nothing seems to work, run `show configuration` in config mode. Anything listed there has not been applied yet.
+!!! warning ""
+    **Remember to `commit`.** The most common mistake on XR is typing the commands and forgetting `commit`.
+    If nothing seems to work, run `show configuration` in config mode. Anything listed there has not been applied yet.
 
-> **`show configuration` only shows what is waiting to be committed.** Run it **before** `commit`, and read it. Once you
-> `commit`, nothing is pending any more, so those lines no longer appear (use `show running-config` to see what is
-> applied). Every step below follows the same pattern: type the commands, run `show configuration`, compare the
-> output with the example shown **below the commands**, and only then `commit`. Do not paste `commit` together with the
-> commands, or you will skip the check.
+!!! note ""
+    **`show configuration` only shows what is waiting to be committed.** Run it **before** `commit`, and read it. Once you
+    `commit`, nothing is pending any more, so those lines no longer appear (use `show running-config` to see what is
+    applied). Every step below follows the same pattern: type the commands, run `show configuration`, compare the
+    output with the example shown **below the commands**, and only then `commit`. Do not paste `commit` together with the
+    commands, or you will skip the check.
 
 ---
 
@@ -147,8 +152,9 @@ commit
 end
 ```
 
-> A `/31` has the subnet mask `255.255.255.254`. It uses both addresses of the pair, so there is no
-> network or broadcast address on a point-to-point link.
+!!! note ""
+    A `/31` has the subnet mask `255.255.255.254`. It uses both addresses of the pair, so there is no
+    network or broadcast address on a point-to-point link.
 
 ### Verify Step 1
 
@@ -244,6 +250,7 @@ end
 ```
 
 Why these settings:
+
 - **`router-id 1.1.1.1`**: a fixed, predictable router ID that matches the loopback.
 - **`passive enable`** on the loopback: advertise the loopback into OSPF but do not send hellos out of it.
 - **`network point-to-point`** on the links: no DR/BDR election is needed on a two-router link, so adjacencies come up faster and the configuration matches the neighbors.
@@ -384,6 +391,7 @@ Label  Label       or ID              Interface                    Switched
 ```
 
 How to read it:
+
 - **`SR Pfx (idx N)`** is the prefix-SID of router N. Label `16000 + N`.
 - **`Pop`** means the next hop is the destination router itself, so the label is removed (penultimate hop popping). That is why R2 and R6, R1's direct neighbors, show `Pop`.
 - A label going out as itself (for example `16004` to `16004`) is a **swap**: the transit router keeps the same label, because every router uses the same SRGB.
@@ -527,6 +535,7 @@ L 2 10.5.6.0 MRU 1500 [Labels: implicit-null Exp: 0] 14 ms
 ```
 
 How to read it:
+
 - **Hop 0** is R1 itself, sending the packet with label `16004` (R4's prefix-SID).
 - **`L` hops** are routers that forwarded the packet using its label. Hop 1 is R6, hop 2 is R5.
 - **`implicit-null`** at hop 2 means R5 is the last hop before R4, so it pops the label (the same *Pop* you saw in `show mpls forwarding`).
@@ -631,6 +640,7 @@ Routing entry for 2.2.2.2/32
 ```
 
 How to read it:
+
 - **`Protected`**: the primary path (out Gi0/0/0/0 to R2) now has a backup.
 - **`Backup (TI-LFA)`**: the precomputed alternate, out Gi0/0/0/1 to R6. It costs 4 instead of 2, which is normal for a backup.
 - **`Labels: 16005 16002`**: the repair label stack. If the R1-R2 link fails, R1 pushes `16005` (R5's prefix-SID) so the packet is carried through R6 to **R5**, the *repair node*, then `16002` (R2's SID) takes it from R5 to R2.

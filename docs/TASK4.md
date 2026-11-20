@@ -1,7 +1,8 @@
 # Task 4 - Build VLAN-Based Pseudowires (R2, R3, R5, R6)
 
-> **Prerequisite:** complete [Task 3 - Port-Based Pseudowire](TASK3.md) first. This task assumes you know what an attachment
-> circuit, a pseudowire and targeted LDP are. Task 4 does not need R1 or R4.
+!!! info ""
+    **Prerequisite:** complete [Task 3 - Port-Based Pseudowire](TASK3.md) first. This task assumes you know what an attachment
+    circuit, a pseudowire and targeted LDP are. Task 4 does not need R1 or R4.
 
 **Goal:** build **three VLAN-based pseudowires** that chain four hosts together:
 
@@ -13,6 +14,7 @@ In Task 3 a whole port went into one pseudowire. Here a **single port carries se
 goes into its **own** pseudowire. At the end, alpine-2 reaches alpine-6 across all three.
 
 **What you will learn**
+
 - The difference between a port-based and a VLAN-based attachment circuit
 - Configuring an `l2transport` sub-interface that matches one VLAN (`encapsulation dot1q`)
 - Putting two pseudowires on one physical port (R3 and R5 do this)
@@ -64,6 +66,7 @@ two hosts already have IP forwarding on, and every host already has the static r
 hosts.
 
 **Starting state**
+
 - R2-R6 are pre-built, with targeted LDP already configured. You do not need to add LDP anywhere.
 - Gi0/0/0/5 is shut down on R2, R3, R5 and R6.
 - Hosts are ready.
@@ -167,9 +170,10 @@ l2vpn
 end
 ```
 
-> **Compare with Task 3.** There, `l2transport` sat *inside* `interface Gi0/0/0/5`. Here it is part of the sub-interface
-> name, on the same line: `interface Gi0/0/0/5.10 l2transport`. The sub-interface number (`.10`) is only a label. It is
-> `encapsulation dot1q 10` that decides which VLAN is matched. We use the same number for both so it is easy to read.
+!!! note ""
+    **Compare with Task 3.** There, `l2transport` sat *inside* `interface Gi0/0/0/5`. Here it is part of the sub-interface
+    name, on the same line: `interface Gi0/0/0/5.10 l2transport`. The sub-interface number (`.10`) is only a label. It is
+    `encapsulation dot1q 10` that decides which VLAN is matched. We use the same number for both so it is easy to read.
 
 Only when the output matches what you intended, apply it:
 
@@ -304,6 +308,7 @@ You now know the pattern. Build **R5** and **R6** using the tables in "Your Netw
 3. `l2vpn` / `xconnect group VLAN_BASED` with one `p2p` per VLAN, using the sub-interface, the peer's loopback and the pw-id.
 
 Reminders:
+
 - **R5** has two VLANs (11 toward R3, 12 toward R6), like R3.
 - **R6** has one VLAN (12 toward R5), like R2.
 - Use `show configuration` before every `commit`, and compare it with what you intended.
@@ -563,7 +568,8 @@ ping -c 3 192.168.12.6
 Why: the PW and the AC are healthy, but the host sends frames tagged **12** and the router is only matching **99**. Frames that do not match are not forwarded.
 The router cannot know which VLAN the host *should* be using, so no alarm is raised. Fix it by correcting the line and committing again, or with `rollback configuration last 1`.
 
-> **Lesson:** `UP` means the *plumbing* works. It does not prove the right traffic goes through it. Always finish with a ping from the hosts.
+!!! warning ""
+    **Lesson:** `UP` means the *plumbing* works. It does not prove the right traffic goes through it. Always finish with a ping from the hosts.
 
 ### What a shut parent looks like
 
@@ -595,7 +601,7 @@ Try it yourself first. If you get stuck, or want to check your work, the finishe
 3. The frame keeps its VLAN tag across the PW (`Rewrite Tags: []`). What does that tell you about which VLAN number a host on the far side must use?
 4. The pw-id equals the VLAN number in this task. Is that required?
 
-<details>
+<details markdown="1">
 <summary>Answers</summary>
 
 1. The PWs only connect Layer 2 segments. A packet from alpine-2 to alpine-6 has to cross from the VLAN 10 segment to VLAN 11 to VLAN 12, and only alpine-3 and alpine-5 sit in two segments at once. Without forwarding they would drop packets that are not addressed to themselves, so the ping to alpine-6 would fail, while the pings to the neighbors in the same VLAN would still work.

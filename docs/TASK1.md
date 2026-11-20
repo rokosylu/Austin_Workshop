@@ -8,6 +8,7 @@ Most of this task is safe practice: you make changes and undo them. The one chan
 interfaces** in Part 4, which Task 2 needs. R1's hostname ends exactly as it started.
 
 **What you will learn**
+
 - Why a change on XR does nothing until you `commit`
 - How to look at your pending changes (the *target configuration*) and throw them away
 - How to roll back a change after it has been committed
@@ -126,8 +127,9 @@ Leave configuration mode:
 end
 ```
 
-> **Remember:** the most common mistake on XR is typing the commands and forgetting `commit`.
-> If a change does not seem to work, run `show configuration` in config mode. Anything listed there has not been applied yet.
+!!! warning ""
+    **Remember:** the most common mistake on XR is typing the commands and forgetting `commit`.
+    If a change does not seem to work, run `show configuration` in config mode. Anything listed there has not been applied yet.
 
 **Checkpoint:** the prompt shows `R1-LAB` and `show running-config hostname` says `hostname R1-LAB`.
 
@@ -491,8 +493,9 @@ Total entries displayed: 2
 
 LLDP confirms the cabling: R1 Gi0/0/0/0 reaches R2 Gi0/0/0/0, and R1 Gi0/0/0/1 reaches R6 Gi0/0/0/1.
 
-> **If you ever need to undo it:** `show configuration commit changes last 1` shows this change, and
-> `rollback configuration last 1` would shut the ports again. Do not roll it back now, because Task 2 needs them up.
+!!! tip ""
+    **If you ever need to undo it:** `show configuration commit changes last 1` shows this change, and
+    `rollback configuration last 1` would shut the ports again. Do not roll it back now, because Task 2 needs them up.
 
 **Checkpoint:** Gi0/0/0/0 and Gi0/0/0/1 are `Up / Up`, and `show lldp neighbors` lists R2 and R6.
 
@@ -503,9 +506,10 @@ LLDP confirms the cabling: R1 Gi0/0/0/0 reaches R2 Gi0/0/0/0, and R1 Gi0/0/0/1 r
 If you know IOS or IOS XE, XR will feel familiar but organised differently. Here is the **same basic OSPF
 design for R1** in both: a loopback, two point-to-point /31 links, OSPF process 1 in area 0, and the loopback passive.
 
-> **This part is for reading only. Do not type any of these configurations on R1 now.** The XE and XR blocks below are
-> shown side by side so you can *see* how the two platforms differ. You will **enter the XR configuration yourself in
-> [Task 2](TASK2.md)**, step by step, and verify it.
+!!! warning ""
+    **This part is for reading only. Do not type any of these configurations on R1 now.** The XE and XR blocks below are
+    shown side by side so you can *see* how the two platforms differ. You will **enter the XR configuration yourself in
+    [Task 2](TASK2.md)**, step by step, and verify it.
 
 ### IOS XE (for comparison only)
 
@@ -594,8 +598,9 @@ router ospf 1
 | OSPF config only | `show running-config \| section ospf` | `show running-config router ospf 1` |
 | Show a show command from config mode | `do show ...` | `show ...` (or `do show ...`) |
 
-> **In the lab:** XR interfaces start shut down unless someone enables them, which is why you enabled R1's two core
-> interfaces in Part 4. On XE the same step is `no shutdown`, and a new router interface often needs it too.
+!!! note ""
+    **In the lab:** XR interfaces start shut down unless someone enables them, which is why you enabled R1's two core
+    interfaces in Part 4. On XE the same step is `no shutdown`, and a new router interface often needs it too.
 
 Nothing in this part changes R1. You will configure the XR version yourself in **Task 2**, and you will use
 `show configuration` and `commit` exactly as practised here.
@@ -604,31 +609,31 @@ Nothing in this part changes R1. You will configure the XR version yourself in *
 
 ## Check your understanding
 
-<details>
+<details markdown="1">
 <summary>1. You type <code>hostname R1-NEW</code> in configuration mode and then run <code>show running-config hostname</code>. What does it show?</summary>
 
 `hostname R1`. The change is only in the target configuration until you `commit`.
 </details>
 
-<details>
+<details markdown="1">
 <summary>2. You made several changes and want to start over without leaving configuration mode. Which command?</summary>
 
 `clear`. It empties the target configuration and keeps you in config mode. `abort` would also discard everything, but it takes you out of config mode.
 </details>
 
-<details>
+<details markdown="1">
 <summary>3. You committed a bad change an hour ago, and two other commits came after it. How do you undo only the most recent commit, and how do you undo the bad one and everything after it?</summary>
 
 `rollback configuration last 1` undoes only the most recent commit. `rollback configuration to <ID or label>` undoes the named commit and every commit after it. `show configuration commit list` shows the IDs.
 </details>
 
-<details>
+<details markdown="1">
 <summary>4. Where do you enable OSPF on an interface in XR, compared with XE?</summary>
 
 In XR the interface goes under the area inside `router ospf`. In XE it is usually configured on the interface itself with `ip ospf 1 area 0`.
 </details>
 
-<details>
+<details markdown="1">
 <summary>5. You are about to change a link that you reach the router through. What is the safest way to commit?</summary>
 
 `commit confirmed <seconds>`. If the change breaks your connection and you cannot confirm it, the router rolls itself back.

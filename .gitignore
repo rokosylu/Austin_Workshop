@@ -8,3 +8,6 @@ backups/latest
 
 # Named baselines (full configs with password hashes) - local only
 backups/baselines/
+
+# Built MkDocs site
+site/

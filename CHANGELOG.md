@@ -9,6 +9,27 @@ Take a backup before and after each device change with `backups/backup-configs.s
 
 ---
 
+## 2026-11-20
+
+### Student guide is now a MkDocs site (single copy in `docs/`)
+- **Request (instructor):** build the student guide with MkDocs, keep one copy of the content, and make the repo public.
+- **Moved:** `TASK1-4.md`, `LAB-ACCESS.md`, `ANSWERS.md`, `images/` and the SecureCRT script (`securecrt/`) into `docs/`.
+  `securecrt/README.md` is instructor-facing and is excluded from the site. `configs/`, `solutions/`, `backups/`, `DEVICES.md`,
+  the tracker and this changelog stay at the root and are not part of the site.
+- **Added:** `mkdocs.yml` (Material theme, light/dark, top tabs, copy button on every code block), `docs/index.md` (home page with
+  the task table), `README.md`, `requirements.txt` (`mkdocs<2`, `mkdocs-material<10`; Material warns that MkDocs 2.0 will break
+  existing projects, so the version is capped).
+- **Formatting changes:** the 24 `>` quote boxes became admonitions (info/note/tip/warning, text unchanged); the per-router
+  answers in `ANSWERS.md` are now tabs (R1|R4, R2|R3|R5|R6); `<details>` quiz answers kept (marked `markdown="1"`); 15 lists
+  needed a blank line before them (GitHub accepts it, MkDocs does not); the SecureCRT script is a download link in `LAB-ACCESS.md`.
+- **Verified:** `mkdocs build --strict` passes; the built pages have no leftover `!!!` or `===` markers; Home, Lab Access, Task 1
+  and Answers were checked as rendered screenshots (Tasks 2 to 4 were checked in the HTML only).
+- **Not done:** the guides are not published anywhere yet (no GitHub Pages workflow). On GitHub the `docs/*.md` files show the
+  box and tab markup unrendered, so read them in the built site.
+- **Removed:** a stray `up.txt` in the repo root (untracked, uptime check commands).
+- `DEVICES.md` task links now point to `docs/TASKn.md`. Note that `DEVICES.md` was generated from the tracker by a script that no
+  longer exists, so edit it by hand from now on.
+
 ## 2026-11-19
 
 ### TASK4.md Step 0: removed leading spaces on the first output line

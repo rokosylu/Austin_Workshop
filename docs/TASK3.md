@@ -1,13 +1,15 @@
 # Task 3 - Build a Port-Based Pseudowire between R1 and R4
 
-> **Prerequisite:** complete [Task 2 - Build the Underlay on R1](TASK2.md) first. This task needs R1 to reach R4's
-> loopback (`4.4.4.4`) across the SR-MPLS core.
+!!! info ""
+    **Prerequisite:** complete [Task 2 - Build the Underlay on R1](TASK2.md) first. This task needs R1 to reach R4's
+    loopback (`4.4.4.4`) across the SR-MPLS core.
 
 **Goal:** connect **alpine-1** and **alpine-4** as if they were plugged into the same Ethernet switch, even though
 they sit on opposite sides of the MPLS core. You will build a **port-based pseudowire (PW)** between **R1** and **R4**,
 signaled with **targeted LDP**, then ping across it.
 
 **What you will learn**
+
 - What a pseudowire is: an attachment circuit (AC) on each end plus an MPLS tunnel between the PEs
 - Why LDP is used to signal the PW, and why the core needs no BGP
 - Enabling targeted LDP (T-LDP) between two PE loopbacks without turning on LDP on any link
@@ -51,10 +53,12 @@ signaled with **targeted LDP**, then ping across it.
 | PW ID | `100` | `100` |
 
 **Names used in this task**
+
 - xconnect group `PORT_BASED`
 - point-to-point name `R1_to_R4` on R1 and `R4_to_R1` on R4. The names only have local meaning. The **PW ID and the peer address must match** on both ends.
 
 **Starting state**
+
 - R1 has the Task 2 underlay. R2-R6 are pre-built.
 - Gi0/0/0/5 is shut down on R1 and R4.
 - **R2-R6 already have targeted LDP configured** (`mpls ldp` with a router-id). R1 does not, so you will add it.
@@ -143,9 +147,10 @@ There are two lines, and neither one names an interface:
 | `router-id 4.4.4.4` | The LDP identity and the address the TCP session uses. We set it to the **loopback** so the session runs loopback to loopback, over the underlay you built. |
 | `discovery targeted-hello accept` | Lets this router accept targeted hellos from a PE it does not yet have a PW configured toward. |
 
-> **Why no interfaces?** Adding an interface under `mpls ldp` starts LDP *on that link*, and the router would also
-> start handing out LDP labels for the core routes. We do not want that. The core already has SR labels. LDP
-> here is only used to **signal PW labels** between two PEs.
+!!! note ""
+    **Why no interfaces?** Adding an interface under `mpls ldp` starts LDP *on that link*, and the router would also
+    start handing out LDP labels for the core routes. We do not want that. The core already has SR labels. LDP
+    here is only used to **signal PW labels** between two PEs.
 
 Now configure the same thing on **R1**, using R1's loopback:
 
@@ -174,7 +179,8 @@ mpls ldp
 end
 ```
 
-> **Note:** `discovery targeted-hello accept` must be inside `address-family ipv4`. If you type it directly under `mpls ldp`, XR answers `Invalid input`.
+!!! warning ""
+    **Note:** `discovery targeted-hello accept` must be inside `address-family ipv4`. If you type it directly under `mpls ldp`, XR answers `Invalid input`.
 
 Only when the output matches what you intended, apply it:
 
@@ -292,6 +298,7 @@ PORT_BASED R1_to_R4   DN   Gi0/0/0/5              UP       4.4.4.4         100  
 ```
 
 How to read this line:
+
 - `ST DN` (first one): the whole cross-connect is down.
 - Segment 1 (`Gi0/0/0/5`): the AC. It is shown up here because the port itself is up.
 - Segment 2 (`4.4.4.4 100`): the PW. It is `DN` because the far end has not answered yet.
@@ -358,7 +365,8 @@ commit
 end
 ```
 
-> **The two ends must agree.** The `pw-id` has to be the same on both PEs, and each PE's `neighbor` has to be the *other* PE's loopback. If either is wrong, the PW stays down. See Troubleshooting.
+!!! warning ""
+    **The two ends must agree.** The `pw-id` has to be the same on both PEs, and each PE's `neighbor` has to be the *other* PE's loopback. If either is wrong, the PW stays down. See Troubleshooting.
 
 ---
 
@@ -556,8 +564,9 @@ The command takes the peer address and the PW ID. `!!!!!` means the far PE confi
 | No LDP session and no discovery entry | Core unreachable, so the loopbacks cannot talk | `ping 4.4.4.4 source 1.1.1.1` from R1: if it fails, go back to Task 2 |
 | `ping mpls pseudowire` fails but the xconnect is `UP` | Check the PW ID and peer in the command | Use the exact `neighbor ... pw-id` from the config |
 
-> **Tip - a mistake you can undo.** If you commit a wrong PW ID, use what you learned in Task 1:
-> `show configuration commit list`, then `rollback configuration last 1`. Or fix the line and `commit` again.
+!!! tip ""
+    **Tip - a mistake you can undo.** If you commit a wrong PW ID, use what you learned in Task 1:
+    `show configuration commit list`, then `rollback configuration last 1`. Or fix the line and `commit` again.
 
 ---
 
@@ -575,7 +584,7 @@ Try it yourself first. If you get stuck, or want to check your work, the finishe
 3. R4's Gi0/0/0/5 is connected to R1's by the PW. What would alpine-1 see if you connected a **third** host to R4's port? (Hint: a port-based PW carries everything that arrives on the port.)
 4. The PW ID is `100` on both ends. Does it have to be unique across the whole network, or only between the two PEs?
 
-<details>
+<details markdown="1">
 <summary>Answers</summary>
 
 1. A loopback never goes down while the router has any working link, so the session survives a core link failure (TI-LFA from Task 2 keeps the path alive). A link address would drop with that link.

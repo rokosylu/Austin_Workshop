@@ -102,10 +102,10 @@ SRGB: default 16000-23999. All six routers are PEs, each with one attached alpin
 
 | Task | Guide | Focus | Devices | Lab state at start |
 |---|---|---|---|---|
-| 1 | [TASK1.md](TASK1.md) | IOS XR basics: two-stage commit, abort/clear, rollback, enable R1 core ports, OSPF on XE vs XR | R1 | R1 core ports shut, R2-R6 pre-built |
-| 2 | [TASK2.md](TASK2.md) | Underlay on R1: link IPs, OSPF, SR-MPLS, MPLS OAM, TI-LFA | R1 (R2-R6 pre-built) | Task 1 done: R1 core ports up, no IPs |
-| 3 | [TASK3.md](TASK3.md) | Port-based pseudowire R1 to R4, LDP-signaled: targeted LDP, AC, xconnect, verification, PW OAM | R1 and R4 | Task 2 done: R1 underlay built, Gi0/0/0/5 shut on R1 and R4 |
-| 4 | [TASK4.md](TASK4.md) | VLAN-based pseudowires: `Gi0/0/0/5.<vlan>` sub-interfaces, VLANs 10/11/12 chained alpine-2 to alpine-6 | R2, R3, R5, R6 | Baseline: Gi0/0/0/5 shut on those routers, LDP already there |
+| 1 | [TASK1.md](docs/TASK1.md) | IOS XR basics: two-stage commit, abort/clear, rollback, enable R1 core ports, OSPF on XE vs XR | R1 | R1 core ports shut, R2-R6 pre-built |
+| 2 | [TASK2.md](docs/TASK2.md) | Underlay on R1: link IPs, OSPF, SR-MPLS, MPLS OAM, TI-LFA | R1 (R2-R6 pre-built) | Task 1 done: R1 core ports up, no IPs |
+| 3 | [TASK3.md](docs/TASK3.md) | Port-based pseudowire R1 to R4, LDP-signaled: targeted LDP, AC, xconnect, verification, PW OAM | R1 and R4 | Task 2 done: R1 underlay built, Gi0/0/0/5 shut on R1 and R4 |
+| 4 | [TASK4.md](docs/TASK4.md) | VLAN-based pseudowires: `Gi0/0/0/5.<vlan>` sub-interfaces, VLANs 10/11/12 chained alpine-2 to alpine-6 | R2, R3, R5, R6 | Baseline: Gi0/0/0/5 shut on those routers, LDP already there |
 
 ## Configuration Status
 

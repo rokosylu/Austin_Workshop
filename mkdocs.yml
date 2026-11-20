@@ -1,0 +1,52 @@
+site_name: IOS XR Pseudowire Workshop
+site_description: Hands-on lab - build IOS XR pseudowires over an SR-MPLS core
+repo_url: https://github.com/rokosylu/Austin_Workshop
+edit_uri: ""
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.top
+    - navigation.footer
+    - toc.follow
+    - content.code.copy
+    - search.highlight
+
+# Instructor-only notes that live next to the script
+exclude_docs: |
+  securecrt/README.md
+
+nav:
+  - Home: index.md
+  - Lab Access: LAB-ACCESS.md
+  - Task 1 - XR Basics: TASK1.md
+  - Task 2 - Underlay: TASK2.md
+  - Task 3 - Port-Based PW: TASK3.md
+  - Task 4 - VLAN-Based PWs: TASK4.md
+  - Answers: ANSWERS.md
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
