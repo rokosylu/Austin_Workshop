@@ -22,6 +22,7 @@ theme:
     - navigation.tabs
     - navigation.top
     - navigation.footer
+    - toc.integrate
     - toc.follow
     - content.code.copy
     - search.highlight

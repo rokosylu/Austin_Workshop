@@ -11,6 +11,11 @@ Take a backup before and after each device change with `backups/backup-configs.s
 
 ## 2026-11-20
 
+### Guide: table of contents moved to the left
+- **Request (instructor):** the "Table of contents" panel was on the right; the left is more natural.
+- **Changed:** added the Material feature `toc.integrate` to `mkdocs.yml`, so the page's headings now sit in the left sidebar under
+  the page name and the text uses the full width. No content changed.
+
 ### Student guide is now a MkDocs site (single copy in `docs/`)
 - **Request (instructor):** build the student guide with MkDocs, keep one copy of the content, and make the repo public.
 - **Moved:** `TASK1-4.md`, `LAB-ACCESS.md`, `ANSWERS.md`, `images/` and the SecureCRT script (`securecrt/`) into `docs/`.
