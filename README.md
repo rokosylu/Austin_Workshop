@@ -1,4 +1,4 @@
-# IOS XR Pseudowire Workshop
+# Austin XR PW Services Workshop
 
 A hands-on lab for engineers new to **Cisco IOS XR**: learn the XR configuration model, build an SR-MPLS underlay on one router,
 then build port-based and VLAN-based **pseudowires** across a six-router core.

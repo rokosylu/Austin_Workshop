@@ -1,4 +1,4 @@
-# IOS XR Pseudowire Workshop
+# Austin XR PW Services Workshop
 
 In this lab you build **pseudowires (PWs)** on **Cisco IOS XR**. A pseudowire carries Layer 2 traffic across an
 MPLS core, so two hosts on the same subnet can reach each other even though routers sit between them.

@@ -11,6 +11,10 @@ Take a backup before and after each device change with `backups/backup-configs.s
 
 ## 2026-11-20
 
+### Guide renamed to "Austin XR PW Services Workshop"
+- **Request (instructor):** the site title was "IOS XR Pseudowire Workshop".
+- **Changed:** `site_name` in `mkdocs.yml` (header and browser tab), the heading on `docs/index.md`, and the title of `README.md`.
+
 ### Guide: table of contents moved to the left
 - **Request (instructor):** the "Table of contents" panel was on the right; the left is more natural.
 - **Changed:** added the Material feature `toc.integrate` to `mkdocs.yml`, so the page's headings now sit in the left sidebar under
