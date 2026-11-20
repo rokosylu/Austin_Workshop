@@ -11,6 +11,17 @@ Take a backup before and after each device change with `backups/backup-configs.s
 
 ## 2026-11-19
 
+### Finished configurations moved to ANSWERS.md
+- **Reason (instructor):** students could not find the answer when stuck (Task 4 Step 3 said "at the end of this guide", where it sat
+  inside a collapsed box about 270 lines further down).
+- **Changed:** new `ANSWERS.md` with one section per task (Task 2: R1; Task 3: R1, R4; Task 4: R2, R3, R5, R6), copied from the
+  guides. The "Compare with the answer" sections of `TASK2.md`, `TASK3.md` and `TASK4.md` now just link to the matching section;
+  `TASK2.md` (verification line) and `TASK4.md` Step 3 also link to it directly. The quiz answers (the "Answers" boxes under
+  "Questions to think about" in `TASK3.md` and `TASK4.md`, and the Task 1 questions) stay in the guides. The instructor copies in
+  `solutions/` are unchanged.
+- **Not checked:** the links were not clicked on GitHub; the anchors (`#task-2-underlay-on-r1` and so on) follow GitHub's
+  heading-link rules.
+
 ### Host pings: removed `-W 2`
 - **Changed (instructor):** removed `-W 2` from the five alpine `ping` commands in `TASK3.md` and `TASK4.md` (the ones expected
   to fail); `-c` stays on all host pings. A failing ping now waits for the default timeout before showing the summary.

@@ -563,56 +563,8 @@ The command takes the peer address and the PW ID. `!!!!!` means the far PE confi
 
 ## Compare with the answer
 
-<details>
-<summary>Click to see the finished configuration for R1 and R4</summary>
-
-**R1**
-
-```
-mpls ldp
- router-id 1.1.1.1
- address-family ipv4
-  discovery targeted-hello accept
- !
-!
-interface GigabitEthernet0/0/0/5
- description to alpine-1 eth1
- l2transport
- !
-!
-l2vpn
- xconnect group PORT_BASED
-  p2p R1_to_R4
-   interface GigabitEthernet0/0/0/5
-   neighbor ipv4 4.4.4.4 pw-id 100
-   !
-  !
- !
-!
-```
-
-**R4** (the `mpls ldp` block was already there)
-
-```
-interface GigabitEthernet0/0/0/5
- description to alpine-4 eth1
- l2transport
- !
-!
-l2vpn
- xconnect group PORT_BASED
-  p2p R4_to_R1
-   interface GigabitEthernet0/0/0/5
-   neighbor ipv4 1.1.1.1 pw-id 100
-   !
-  !
- !
-!
-```
-
-`show running-config` does not list `no shutdown`, because an enabled interface simply has no `shutdown` line.
-
-</details>
+Try it yourself first. If you get stuck, or want to check your work, the finished configuration for this task is in
+[ANSWERS.md](ANSWERS.md#task-3-port-based-pseudowire-r1-and-r4).
 
 ---
 

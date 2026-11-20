@@ -308,7 +308,7 @@ Reminders:
 - **R6** has one VLAN (12 toward R5), like R2.
 - Use `show configuration` before every `commit`, and compare it with what you intended.
 
-If you get stuck, the finished configuration is at the end of this guide.
+If you get stuck, the finished configuration for R5 and R6 is in [ANSWERS.md](ANSWERS.md#task-4-vlan-based-pseudowires-r2-r3-r5-r6). Try it yourself first.
 
 ---
 
@@ -583,114 +583,8 @@ Note that you shut the parent, but it is the sub-interface that reports `down (A
 
 ## Compare with the answer
 
-<details>
-<summary>Click to see the finished configuration for R2, R3, R5 and R6</summary>
-
-**R2**
-
-```
-interface GigabitEthernet0/0/0/5
- description to alpine-2 eth1
-!
-interface GigabitEthernet0/0/0/5.10 l2transport
- description VLAN 10
- encapsulation dot1q 10
-!
-l2vpn
- xconnect group VLAN_BASED
-  p2p VLAN10
-   interface GigabitEthernet0/0/0/5.10
-   neighbor ipv4 3.3.3.3 pw-id 10
-   !
-  !
- !
-!
-```
-
-**R3**
-
-```
-interface GigabitEthernet0/0/0/5
- description to alpine-3 eth1
-!
-interface GigabitEthernet0/0/0/5.10 l2transport
- description VLAN 10
- encapsulation dot1q 10
-!
-interface GigabitEthernet0/0/0/5.11 l2transport
- description VLAN 11
- encapsulation dot1q 11
-!
-l2vpn
- xconnect group VLAN_BASED
-  p2p VLAN10
-   interface GigabitEthernet0/0/0/5.10
-   neighbor ipv4 2.2.2.2 pw-id 10
-   !
-  !
-  p2p VLAN11
-   interface GigabitEthernet0/0/0/5.11
-   neighbor ipv4 5.5.5.5 pw-id 11
-   !
-  !
- !
-!
-```
-
-**R5**
-
-```
-interface GigabitEthernet0/0/0/5
- description to alpine-5 eth1
-!
-interface GigabitEthernet0/0/0/5.11 l2transport
- description VLAN 11
- encapsulation dot1q 11
-!
-interface GigabitEthernet0/0/0/5.12 l2transport
- description VLAN 12
- encapsulation dot1q 12
-!
-l2vpn
- xconnect group VLAN_BASED
-  p2p VLAN11
-   interface GigabitEthernet0/0/0/5.11
-   neighbor ipv4 3.3.3.3 pw-id 11
-   !
-  !
-  p2p VLAN12
-   interface GigabitEthernet0/0/0/5.12
-   neighbor ipv4 6.6.6.6 pw-id 12
-   !
-  !
- !
-!
-```
-
-**R6**
-
-```
-interface GigabitEthernet0/0/0/5
- description to alpine-6 eth1
-!
-interface GigabitEthernet0/0/0/5.12 l2transport
- description VLAN 12
- encapsulation dot1q 12
-!
-l2vpn
- xconnect group VLAN_BASED
-  p2p VLAN12
-   interface GigabitEthernet0/0/0/5.12
-   neighbor ipv4 5.5.5.5 pw-id 12
-   !
-  !
- !
-!
-```
-
-`show running-config` does not list `no shutdown` on the parent port, because an enabled interface simply has no `shutdown` line.
-
-</details>
+Try it yourself first. If you get stuck, or want to check your work, the finished configuration for this task is in
+[ANSWERS.md](ANSWERS.md#task-4-vlan-based-pseudowires-r2-r3-r5-r6).
 
 ---
 

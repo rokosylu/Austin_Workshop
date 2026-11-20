@@ -764,7 +764,7 @@ ping 6.6.6.6 source 1.1.1.1
 ```
 
 Your changes are in effect as soon as you `commit`. Review what you configured with
-`show running-config` and compare it to the answer at the end of this guide.
+`show running-config` and compare it to the answer in [ANSWERS.md](ANSWERS.md#task-2-underlay-on-r1).
 
 ---
 
@@ -806,47 +806,8 @@ rollback configuration last 1
 
 ## Compare with the answer
 
-<details>
-<summary>Click to see the finished R1 configuration</summary>
-
-```
-interface Loopback0
- description Router-ID and SR prefix-SID
- ipv4 address 1.1.1.1 255.255.255.255
-!
-interface GigabitEthernet0/0/0/0
- description to R2 Gi0/0/0/0
- ipv4 address 10.1.2.0 255.255.255.254
-!
-interface GigabitEthernet0/0/0/1
- description to R6 Gi0/0/0/1
- ipv4 address 10.1.6.0 255.255.255.254
-!
-router ospf 1
- router-id 1.1.1.1
- segment-routing mpls
- area 0
-  interface Loopback0
-   passive enable
-   prefix-sid index 1
-  !
-  interface GigabitEthernet0/0/0/0
-   network point-to-point
-   fast-reroute per-prefix
-   fast-reroute per-prefix ti-lfa enable
-  !
-  interface GigabitEthernet0/0/0/1
-   network point-to-point
-   fast-reroute per-prefix
-   fast-reroute per-prefix ti-lfa enable
-  !
- !
-!
-mpls oam
-!
-```
-
-</details>
+Try it yourself first. If you get stuck, or want to check your work, the finished configuration for this task is in
+[ANSWERS.md](ANSWERS.md#task-2-underlay-on-r1).
 
 ---
 
